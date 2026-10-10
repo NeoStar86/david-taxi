@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSiteData } from "../context/SiteDataContext";
 import { changeAdminPassword, logoutAdmin } from "./auth";
+import AdminImageField from "./AdminImageField";
 
 const tabs = [
   { id: "general", label: "פרטים כלליים וקשר" },
@@ -30,6 +31,17 @@ export default function AdminDashboard({ onLogout }) {
   function persist(nextDraft) {
     setDraft(nextDraft);
     saveAll(nextDraft);
+  }
+
+  function updateMediaField(key, value, { persist: shouldPersist = false } = {}) {
+    const nextDraft = {
+      ...draft,
+      media: { ...draft.media, [key]: value },
+    };
+    setDraft(nextDraft);
+    if (shouldPersist) {
+      saveAll(nextDraft);
+    }
   }
 
   function handleLogout() {
@@ -96,8 +108,84 @@ export default function AdminDashboard({ onLogout }) {
 
         <div className="glass-card mt-4 p-5 sm:p-7">
           {activeTab === "general" && (
-            <section className="space-y-4">
+            <section className="space-y-6">
               <h2 className="text-xl font-extrabold">פרטים כלליים וקשר</h2>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
+                  <p className="text-sm font-extrabold">מונה פניות (לחיצות באתר)</p>
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-white/5 px-4 py-3 text-center">
+                      <p className="text-2xl font-extrabold text-gold">{draft.analytics?.callClicks ?? 0}</p>
+                      <p className="text-xs text-cream/60">לחיצות חיוג</p>
+                    </div>
+                    <div className="rounded-xl bg-white/5 px-4 py-3 text-center">
+                      <p className="text-2xl font-extrabold text-gold">{draft.analytics?.whatsappClicks ?? 0}</p>
+                      <p className="text-xs text-cream/60">לחיצות WhatsApp</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-extrabold">סטטוס זמינות חי</p>
+                      <p className="mt-1 text-xs text-cream/60">מוצג בכותרת האתר ללקוחות בזמן אמת</p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={draft.availability.isAvailable}
+                      onClick={() =>
+                        persist({
+                          ...draft,
+                          availability: { isAvailable: !draft.availability.isAvailable },
+                        })
+                      }
+                      className={`min-h-12 shrink-0 rounded-full px-5 text-sm font-extrabold transition ${
+                        draft.availability.isAvailable
+                          ? "bg-emerald-500/20 text-emerald-200 ring-2 ring-emerald-400/40"
+                          : "bg-red-500/20 text-red-200 ring-2 ring-red-400/40"
+                      }`}
+                    >
+                      {draft.availability.isAvailable ? "זמין כעת לנסיעות" : "לא זמין כעת"}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
+                  <p className="text-sm font-extrabold">באנר מבצעים מתחלף</p>
+                  <label className="mt-3 flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5 accent-gold"
+                      checked={Boolean(draft.announcement?.enabled)}
+                      onChange={(event) =>
+                        setDraft((current) => ({
+                          ...current,
+                          announcement: { ...current.announcement, enabled: event.target.checked },
+                        }))
+                      }
+                    />
+                    <span className="text-sm font-bold">הצגת באנר הודעה בראש האתר</span>
+                  </label>
+                  <label className="mt-3 block">
+                    <span className="text-xs font-bold text-cream/60">טקסט המבצע</span>
+                    <input
+                      className={inputClass}
+                      value={draft.announcement?.message ?? ""}
+                      onChange={(event) =>
+                        setDraft((current) => ({
+                          ...current,
+                          announcement: { ...current.announcement, message: event.target.value },
+                        }))
+                      }
+                      placeholder="הנחה מיוחדת להזמנות הלילה!"
+                    />
+                  </label>
+                </div>
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 {[
                   ["phoneDisplay", "טלפון לחיוג"],
@@ -158,6 +246,47 @@ export default function AdminDashboard({ onLogout }) {
           {activeTab === "fare" && (
             <section className="space-y-4">
               <h2 className="text-xl font-extrabold">מחשבון מחירים</h2>
+
+              <div className="rounded-2xl border border-white/10 bg-ink/40 p-4">
+                <p className="text-sm font-extrabold">תוספת לילה / סופ״ש (Surge)</p>
+                <label className="mt-3 flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    className="h-5 w-5 accent-gold"
+                    checked={Boolean(draft.fare.surge?.enabled)}
+                    onChange={(event) =>
+                      setDraft((current) => ({
+                        ...current,
+                        fare: {
+                          ...current.fare,
+                          surge: { ...current.fare.surge, enabled: event.target.checked },
+                        },
+                      }))
+                    }
+                  />
+                  <span className="text-sm font-bold">הפעלת תוספת אחוזית לאומדן המחיר</span>
+                </label>
+                <label className="mt-3 block max-w-xs">
+                  <span className="text-xs font-bold text-cream/60">אחוז תוספת (לדוגמה 20 = +20%)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    className={inputClass}
+                    value={draft.fare.surge?.percent ?? 20}
+                    onChange={(event) =>
+                      setDraft((current) => ({
+                        ...current,
+                        fare: {
+                          ...current.fare,
+                          surge: { ...current.fare.surge, percent: Number(event.target.value) },
+                        },
+                      }))
+                    }
+                  />
+                </label>
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead>
@@ -257,42 +386,23 @@ export default function AdminDashboard({ onLogout }) {
           {activeTab === "media" && (
             <section className="space-y-4">
               <h2 className="text-xl font-extrabold">ניהול מדיה ותמונות</h2>
+              <p className="text-sm text-cream/65">
+                העלאה מהגלריה נשמרת מיד ב-localStorage ומתעדכנת באתר. תמונות מכווצות אוטומטית לשמירה במכשיר.
+              </p>
               {[
-                ["heroImage", "תמונת Hero (URL)"],
-                ["carPhoto", "תמונת רכב (URL)"],
-                ["logoUrl", "לוגו (URL)"],
+                ["heroImage", "תמונת Hero"],
+                ["carPhoto", "תמונת רכב"],
+                ["logoUrl", "לוגו"],
               ].map(([key, label]) => (
-                <div key={key} className="rounded-2xl border border-white/10 bg-ink/40 p-4">
-                  <label className="block">
-                    <span className="text-sm font-bold">{label}</span>
-                    <input
-                      className={inputClass}
-                      value={draft.media[key] ?? ""}
-                      onChange={(event) =>
-                        setDraft((current) => ({
-                          ...current,
-                          media: { ...current.media, [key]: event.target.value },
-                        }))
-                      }
-                      placeholder="https://..."
-                    />
-                  </label>
-                  {draft.media[key] ? (
-                    <img
-                      src={draft.media[key]}
-                      alt={label}
-                      className="mt-3 h-28 w-full rounded-xl border border-white/10 object-cover"
-                      onError={(event) => {
-                        event.currentTarget.classList.add("hidden");
-                      }}
-                    />
-                  ) : (
-                    <p className="mt-2 text-xs text-cream/50">אין תצוגה מקדימה</p>
-                  )}
-                </div>
+                <AdminImageField
+                  key={key}
+                  label={label}
+                  value={draft.media[key] ?? ""}
+                  onUpdate={(value, options) => updateMediaField(key, value, options)}
+                />
               ))}
               <button type="button" className="btn-primary min-h-12 px-6" onClick={() => persist(draft)}>
-                שמור שינויים
+                שמור קישורי URL
               </button>
             </section>
           )}

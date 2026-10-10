@@ -6,7 +6,25 @@ function routeKey(origin, destination) {
   return `${normalize(origin)}|${normalize(destination)}`;
 }
 
-export function estimateFareFromRoutes(routes, origin, destination) {
+function applySurge(result, surge) {
+  if (result.error || !surge?.enabled) {
+    return result;
+  }
+  const percent = Number(surge.percent) || 0;
+  if (percent <= 0) {
+    return result;
+  }
+  const factor = 1 + percent / 100;
+  return {
+    ...result,
+    min: Math.round(result.min * factor),
+    max: Math.round(result.max * factor),
+    surgeApplied: true,
+    surgePercent: percent,
+  };
+}
+
+export function estimateFareFromRoutes(routes, origin, destination, surge) {
   const from = normalize(origin);
   const to = normalize(destination);
 
@@ -27,25 +45,31 @@ export function estimateFareFromRoutes(routes, origin, destination) {
   const match = direct ?? reverse;
 
   if (match) {
-    return {
-      origin: from,
-      destination: to,
-      min: Number(match.min),
-      max: Number(match.max),
-      minutes: Number(match.minutes),
-    };
+    return applySurge(
+      {
+        origin: from,
+        destination: to,
+        min: Number(match.min),
+        max: Number(match.max),
+        minutes: Number(match.minutes),
+      },
+      surge,
+    );
   }
 
   const fallbackMinutes = Math.min(120, 25 + Math.max(from.length, to.length) * 3);
   const base = 80 + fallbackMinutes * 2;
-  return {
-    origin: from,
-    destination: to,
-    min: base,
-    max: base + 35,
-    minutes: fallbackMinutes,
-    approximate: true,
-  };
+  return applySurge(
+    {
+      origin: from,
+      destination: to,
+      min: base,
+      max: base + 35,
+      minutes: fallbackMinutes,
+      approximate: true,
+    },
+    surge,
+  );
 }
 
 export function formatEstimate(result) {

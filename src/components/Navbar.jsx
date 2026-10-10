@@ -5,7 +5,8 @@ import { LogoMark } from "./Icons";
 
 export default function Navbar() {
   const { data } = useSiteData();
-  const { site, media, static: staticContent } = data;
+  const { site, media, availability, static: staticContent } = data;
+  const available = availability?.isAvailable !== false;
   const { navLinks } = staticContent;
   const [open, setOpen] = useState(false);
 
@@ -22,6 +23,20 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/80 text-cream backdrop-blur-xl">
+      <div
+        className={`border-b px-4 py-1.5 text-center text-xs font-extrabold sm:text-sm ${
+          available
+            ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-200"
+            : "border-red-400/25 bg-red-500/10 text-red-200"
+        }`}
+      >
+        <span className="inline-flex items-center gap-2">
+          <span
+            className={`h-2 w-2 rounded-full ${available ? "animate-pulse bg-emerald-300" : "bg-red-300"}`}
+          />
+          {available ? "זמין כעת לנסיעות" : "לא זמין כעת — נסו שוב מאוחר יותר"}
+        </span>
+      </div>
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
         <a href="#top" className="flex min-w-0 items-center gap-2.5 sm:gap-3" onClick={close}>
           {media.logoUrl ? (

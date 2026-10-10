@@ -164,6 +164,21 @@ input[type="datetime-local"] {
   }
 }
 
+@keyframes marquee-rtl {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-marquee {
+  display: inline-block;
+  min-width: 100%;
+  animation: marquee-rtl 18s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -175,5 +190,9 @@ input[type="datetime-local"] {
   .btn-outline-gold:hover,
   .btn-whatsapp:hover {
     transform: none;
+  }
+
+  .animate-marquee {
+    animation: none;
   }
 }

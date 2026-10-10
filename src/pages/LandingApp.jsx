@@ -1,6 +1,6 @@
 import Advantages from "../components/Advantages";
 import Areas from "../components/Areas";
-import AvailabilityBadge from "../components/AvailabilityBadge";
+import AnnouncementBar from "../components/AnnouncementBar";
 import Contact from "../components/Contact";
 import Faq from "../components/Faq";
 import FareCalculator from "../components/FareCalculator";
@@ -14,7 +14,7 @@ import Testimonials from "../components/Testimonials";
 export default function LandingApp() {
   return (
     <div id="top" className="min-h-screen bg-ink text-cream">
-      <AvailabilityBadge />
+      <AnnouncementBar />
       <Navbar />
       <main>
         <Hero />

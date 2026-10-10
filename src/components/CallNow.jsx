@@ -7,12 +7,13 @@ const sizes = {
 };
 
 export default function CallNow({ size = "md", className = "" }) {
-  const { data } = useSiteData();
+  const { data, recordClick } = useSiteData();
   const { site } = data;
 
   return (
     <a
       href={`tel:${site.phoneTel}`}
+      onClick={() => recordClick("call")}
       className={`btn-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
     >
       <PhoneIcon />
@@ -22,12 +23,13 @@ export default function CallNow({ size = "md", className = "" }) {
 }
 
 export function WhatsAppButton({ size = "lg", className = "" }) {
-  const { data } = useSiteData();
+  const { data, recordClick } = useSiteData();
   const { site } = data;
 
   return (
     <a
       href={`https://wa.me/${site.whatsapp}`}
+      onClick={() => recordClick("whatsapp")}
       className={`btn-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
     >
       <span className="text-[#25D366]">

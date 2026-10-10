@@ -16,7 +16,7 @@ const fieldClass =
   "mt-2 w-full rounded-xl border border-white/15 bg-ink px-4 py-3 text-base text-cream outline-none transition placeholder:text-cream/35 focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
 
 export default function Contact() {
-  const { data, addLead } = useSiteData();
+  const { data, addLead, recordClick } = useSiteData();
   const { site } = data;
   const [form, setForm] = useState(emptyForm);
 
@@ -52,7 +52,7 @@ export default function Contact() {
             <div className="mt-8 space-y-3 text-sm text-cream/75">
               <p>
                 <span className="font-bold text-cream">טלפון: </span>
-                <a href={`tel:${site.phoneTel}`} className="hover:text-gold">
+                <a href={`tel:${site.phoneTel}`} onClick={() => recordClick("call")} className="hover:text-gold">
                   {site.phoneDisplay}
                 </a>
               </p>
@@ -62,6 +62,7 @@ export default function Contact() {
                   href={`https://wa.me/${site.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => recordClick("whatsapp")}
                   className="hover:text-gold"
                 >
                   {site.phoneDisplay}

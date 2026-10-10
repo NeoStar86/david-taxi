@@ -49,6 +49,15 @@ export function SiteDataProvider({ children }) {
         setNotice("השינויים נשמרו בהצלחה");
         window.setTimeout(() => setNotice(""), 2600);
       },
+      recordClick: (kind) => {
+        setData((current) => ({
+          ...current,
+          analytics: {
+            callClicks: (current.analytics?.callClicks ?? 0) + (kind === "call" ? 1 : 0),
+            whatsappClicks: (current.analytics?.whatsappClicks ?? 0) + (kind === "whatsapp" ? 1 : 0),
+          },
+        }));
+      },
       reloadFromStorage: () => setData(loadSiteState()),
     }),
     [data, notice],

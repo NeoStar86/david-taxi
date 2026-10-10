@@ -14,8 +14,8 @@ export default function FareCalculator() {
   const [destination, setDestination] = useState(fare.destinationSuggestions[0] ?? 'נתב"ג');
 
   const estimate = useMemo(
-    () => estimateFareFromRoutes(fare.routes, origin, destination),
-    [fare.routes, origin, destination],
+    () => estimateFareFromRoutes(fare.routes, origin, destination, fare.surge),
+    [fare.routes, fare.surge, origin, destination],
   );
   const formatted = useMemo(() => formatEstimate(estimate), [estimate]);
 
@@ -113,6 +113,7 @@ export default function FareCalculator() {
                     <span>
                       מ{estimate.origin} ל{estimate.destination}
                       {estimate.approximate ? " · אומדן כללי" : ""}
+                      {estimate.surgeApplied ? ` · תוספת ${estimate.surgePercent}%` : ""}
                     </span>
                   </div>
                 </>

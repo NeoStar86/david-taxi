@@ -16,10 +16,13 @@ export function loadSiteState() {
       site: { ...defaults.site, ...parsed.site },
       media: { ...defaults.media, ...parsed.media },
       availability: { ...defaults.availability, ...parsed.availability },
+      announcement: { ...defaults.announcement, ...parsed.announcement },
+      analytics: { ...defaults.analytics, ...parsed.analytics },
       fare: {
         ...defaults.fare,
         ...parsed.fare,
         routes: parsed.fare?.routes?.length ? parsed.fare.routes : defaults.fare.routes,
+        surge: { ...defaults.fare.surge, ...parsed.fare?.surge },
       },
       testimonials: parsed.testimonials?.length ? parsed.testimonials : defaults.testimonials,
       leads: parsed.leads ?? [],

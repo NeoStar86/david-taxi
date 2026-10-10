@@ -3,7 +3,7 @@ import { useSiteData } from "../context/SiteDataContext";
 import { openLocationShareWhatsApp } from "../utils/whatsappLinks";
 
 export default function MobileStickyBar() {
-  const { data } = useSiteData();
+  const { data, recordClick } = useSiteData();
   const { site } = data;
 
   return (
@@ -23,6 +23,7 @@ export default function MobileStickyBar() {
       <div className="flex h-14">
         <a
           href={`tel:${site.phoneTel}`}
+          onClick={() => recordClick("call")}
           className="flex min-h-14 flex-1 items-center justify-center gap-2 bg-gold text-base font-extrabold text-ink transition active:bg-gold-deep"
         >
           <Phone className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />
@@ -32,6 +33,7 @@ export default function MobileStickyBar() {
           href={`https://wa.me/${site.whatsapp}`}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => recordClick("whatsapp")}
           className="flex min-h-14 flex-1 items-center justify-center gap-2 bg-[#25D366] text-base font-extrabold text-white transition active:bg-[#1da851]"
         >
           <MessageCircle className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />

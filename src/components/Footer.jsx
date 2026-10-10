@@ -2,7 +2,7 @@ import { useSiteData } from "../context/SiteDataContext";
 import SaveContactButton from "./SaveContactButton";
 
 export default function Footer() {
-  const { data } = useSiteData();
+  const { data, recordClick } = useSiteData();
   const { site } = data;
 
   return (
@@ -16,13 +16,18 @@ export default function Footer() {
             <SaveContactButton />
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-cream/70">
-            <a href={`tel:${site.phoneTel}`} className="font-semibold hover:text-gold">
+            <a
+              href={`tel:${site.phoneTel}`}
+              onClick={() => recordClick("call")}
+              className="font-semibold hover:text-gold"
+            >
               {site.phoneDisplay}
             </a>
             <a
               href={`https://wa.me/${site.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => recordClick("whatsapp")}
               className="hover:text-gold"
             >
               WhatsApp

@@ -36,10 +36,22 @@ export function createDefaultSiteState() {
     availability: {
       isAvailable: true,
     },
+    announcement: {
+      enabled: false,
+      message: "הנחה מיוחדת להזמנות הלילה!",
+    },
+    analytics: {
+      callClicks: 0,
+      whatsappClicks: 0,
+    },
     fare: {
       originSuggestions: [...originSuggestions],
       destinationSuggestions: [...destinationSuggestions],
       routes: seedRoutes,
+      surge: {
+        enabled: false,
+        percent: 20,
+      },
     },
     testimonials: testimonials.map((item, index) => ({
       id: `t${index + 1}`,
