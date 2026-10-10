@@ -1,5 +1,14 @@
 import { mergeVehicles } from "../data/defaultVehicles";
+import { SUPPORTED_LANGS } from "../i18n/translations";
 import { createDefaultSiteState } from "./defaults";
+
+function mergeCmsHero(defaultsHero, storedHero) {
+  const hero = {};
+  for (const lang of SUPPORTED_LANGS) {
+    hero[lang] = { ...defaultsHero[lang], ...storedHero?.[lang] };
+  }
+  return hero;
+}
 
 export const STORAGE_KEY = "david-taxi-site-data-v1";
 
@@ -19,6 +28,12 @@ export function loadSiteState() {
       media: { ...defaults.media, ...parsed.media },
       announcement: { ...defaults.announcement, ...parsed.announcement },
       analytics: { ...defaults.analytics, ...parsed.analytics },
+      theme: { ...defaults.theme, ...parsed.theme },
+      cms: {
+        ...defaults.cms,
+        ...parsed.cms,
+        hero: mergeCmsHero(defaults.cms.hero, parsed.cms?.hero),
+      },
       vehicles: mergeVehicles(parsed.vehicles),
       fare: {
         ...defaults.fare,

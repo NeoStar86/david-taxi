@@ -8,8 +8,14 @@ import { SedanArt } from "./Icons";
 
 export default function Hero() {
   const { data } = useSiteData();
-  const { media } = data;
-  const { t } = useLanguage();
+  const { media, cms } = data;
+  const { lang, t } = useLanguage();
+  const hero = cms?.hero?.[lang] ?? {};
+
+  const badge = hero.badge || t("badge_text");
+  const title = hero.title || t("hero_title");
+  const subtitle = hero.subtitle || t("hero_subtitle");
+  const address = hero.address || t("hero_address");
 
   return (
     <section
@@ -32,15 +38,15 @@ export default function Hero() {
           <div>
             <p className="glass-card mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-gold">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-              {t("badge_text")}
+              {badge}
             </p>
             <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-              {t("hero_title")}
+              {title}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/75 sm:text-xl">{t("hero_subtitle")}</p>
-            <p className="mt-3 text-sm text-cream/60">{t("hero_address")}</p>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/75 sm:text-xl">{subtitle}</p>
+            <p className="mt-3 text-sm text-cream/60">{address}</p>
 
-            <VehiclePicker />
+            <VehiclePicker prompt={hero.selectVehiclePrompt} />
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <CallNow size="lg" className="w-full sm:w-auto" />

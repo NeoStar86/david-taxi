@@ -29,6 +29,18 @@ body {
   font-family: var(--font-sans);
 }
 
+html[data-site-theme="light"] body {
+  background:
+    radial-gradient(ellipse 80% 50% at 100% -10%, rgba(245, 197, 24, 0.12), transparent 55%),
+    var(--color-ink);
+}
+
+html[data-site-theme="light"] .glass-card {
+  border-color: rgb(7 7 8 / 0.12);
+  background: linear-gradient(145deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.78));
+  box-shadow: 0 8px 28px rgb(7 7 8 / 0.08);
+}
+
 ::selection {
   background: #f5c518;
   color: #070708;
@@ -42,7 +54,11 @@ input[type="datetime-local"] {
   .glass-card {
     border-radius: 1.5rem;
     border: 1px solid rgb(255 255 255 / 0.12);
-    background: linear-gradient(145deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--site-card-bg, #16161f) 72%, white 28%),
+      color-mix(in srgb, var(--site-card-bg, #16161f) 88%, black 12%)
+    );
     box-shadow:
       0 8px 32px rgb(0 0 0 / 0.35),
       inset 0 1px 0 rgb(255 255 255 / 0.06);

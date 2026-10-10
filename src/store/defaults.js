@@ -9,6 +9,8 @@ import {
 } from "../content";
 import { defaultVehicles } from "../data/defaultVehicles";
 import { destinationSuggestions, originSuggestions } from "../data/fareEstimates";
+import { createDefaultCms } from "./defaultCms";
+import { createDefaultTheme } from "./defaultTheme";
 
 const seedRoutes = [
   { id: "r1", origin: "תל אביב", destination: 'נתב"ג', min: 140, max: 170, minutes: 25 },
@@ -42,9 +44,12 @@ export function createDefaultSiteState() {
       callClicks: 0,
       whatsappClicks: 0,
     },
+    theme: createDefaultTheme(),
+    cms: createDefaultCms(),
     vehicles: defaultVehicles.map((vehicle) => ({
       ...vehicle,
       names: { ...vehicle.names },
+      subtitles: { ...vehicle.subtitles },
     })),
     fare: {
       originSuggestions: [...originSuggestions],
