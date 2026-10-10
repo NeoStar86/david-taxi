@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 import { useSiteData } from "../context/SiteDataContext";
 import ShareLocationButton from "./ShareLocationButton";
 import { buildBookingWhatsAppUrl } from "../utils/whatsappBooking";
@@ -18,6 +19,7 @@ const fieldClass =
 export default function Contact() {
   const { data, addLead, recordClick } = useSiteData();
   const { site } = data;
+  const { lang, t } = useLanguage();
   const [form, setForm] = useState(emptyForm);
 
   function updateField(field) {
@@ -32,7 +34,7 @@ export default function Contact() {
       source: "טופס הזמנה",
       payload: { ...form },
     });
-    const url = buildBookingWhatsAppUrl(form, site);
+    const url = buildBookingWhatsAppUrl(form, site, lang);
     window.open(url, "_blank", "noopener,noreferrer");
   }
 
@@ -41,23 +43,21 @@ export default function Contact() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-14">
           <div>
-            <p className="section-kicker">צור קשר</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-              להזמנת נסיעה / קבלת הצעת מחיר
-            </h2>
+            <p className="section-kicker">{t("contact.kicker")}</p>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">{t("contact.title")}</h2>
             <p className="mt-4 text-lg leading-relaxed text-cream/70">
-              ממלאים את הפרטים, ונפתחת הודעת WhatsApp מוכנה לשליחה. {site.hours}.
+              {t("contact.subtitle")} {site.hours}.
             </p>
             {site.address && <p className="mt-2 text-sm text-cream/65">{site.address}</p>}
             <div className="mt-8 space-y-3 text-sm text-cream/75">
               <p>
-                <span className="font-bold text-cream">טלפון: </span>
+                <span className="font-bold text-cream">{t("contact.phoneLabel")} </span>
                 <a href={`tel:${site.phoneTel}`} onClick={() => recordClick("call")} className="hover:text-gold">
                   {site.phoneDisplay}
                 </a>
               </p>
               <p>
-                <span className="font-bold text-cream">WhatsApp: </span>
+                <span className="font-bold text-cream">{t("contact.whatsappLabel")} </span>
                 <a
                   href={`https://wa.me/${site.whatsapp}`}
                   target="_blank"
@@ -78,7 +78,7 @@ export default function Contact() {
           >
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="block sm:col-span-2">
-                <span className="text-sm font-bold text-cream">שם מלא</span>
+                <span className="text-sm font-bold text-cream">{t("contact.fullName")}</span>
                 <input
                   type="text"
                   name="fullName"
@@ -87,12 +87,12 @@ export default function Contact() {
                   value={form.fullName}
                   onChange={updateField("fullName")}
                   className={fieldClass}
-                  placeholder="הכניסו שם מלא"
+                  placeholder={t("contact.phName")}
                 />
               </label>
 
               <label className="block">
-                <span className="text-sm font-bold text-cream">טלפון</span>
+                <span className="text-sm font-bold text-cream">{t("contact.phone")}</span>
                 <input
                   type="tel"
                   name="phone"
@@ -107,7 +107,7 @@ export default function Contact() {
               </label>
 
               <label className="block">
-                <span className="text-sm font-bold text-cream">תאריך ושעה</span>
+                <span className="text-sm font-bold text-cream">{t("contact.dateTime")}</span>
                 <input
                   type="datetime-local"
                   name="dateTime"
@@ -120,7 +120,7 @@ export default function Contact() {
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="text-sm font-bold text-cream">נקודת איסוף</span>
+                <span className="text-sm font-bold text-cream">{t("contact.pickup")}</span>
                 <input
                   type="text"
                   name="pickup"
@@ -128,7 +128,7 @@ export default function Contact() {
                   value={form.pickup}
                   onChange={updateField("pickup")}
                   className={fieldClass}
-                  placeholder="רחוב, עיר, נקודת מפגש"
+                  placeholder={t("contact.phPickup")}
                 />
               </label>
 
@@ -137,7 +137,7 @@ export default function Contact() {
               </div>
 
               <label className="block sm:col-span-2">
-                <span className="text-sm font-bold text-cream">יעד נסיעה</span>
+                <span className="text-sm font-bold text-cream">{t("contact.destination")}</span>
                 <input
                   type="text"
                   name="destination"
@@ -145,21 +145,21 @@ export default function Contact() {
                   value={form.destination}
                   onChange={updateField("destination")}
                   className={fieldClass}
-                  placeholder="לאן מגיעים?"
+                  placeholder={t("contact.phDestination")}
                 />
               </label>
 
               <label className="block sm:col-span-2">
                 <span className="text-sm font-bold text-cream">
-                  הערות נוספות <span className="font-normal text-cream/50">(אופציונלי)</span>
+                  {t("contact.notes")} <span className="font-normal text-cream/50">{t("contact.optional")}</span>
                 </span>
                 <textarea
                   name="notes"
                   rows={3}
                   value={form.notes}
                   onChange={updateField("notes")}
-                  className={`${fieldClass} resize-y min-h-[96px]`}
-                  placeholder="מספר נוסעים, מזוודות, הערות מיוחדות..."
+                  className={`${fieldClass} min-h-[96px] resize-y`}
+                  placeholder={t("contact.phNotes")}
                 />
               </label>
             </div>
@@ -168,7 +168,7 @@ export default function Contact() {
               type="submit"
               className="btn-whatsapp mt-6 w-full min-h-14 px-6 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
             >
-              שלח לבדיקת מחיר ב-WhatsApp
+              {t("contact.submit")}
             </button>
           </form>
         </div>

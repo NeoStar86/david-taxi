@@ -1,3 +1,4 @@
+import { useLanguage } from "../context/LanguageContext";
 import { useSiteData } from "../context/SiteDataContext";
 import CallNow, { WhatsAppButton } from "./CallNow";
 import SaveContactButton from "./SaveContactButton";
@@ -8,6 +9,7 @@ import { SedanArt } from "./Icons";
 export default function Hero() {
   const { data } = useSiteData();
   const { site, media } = data;
+  const { t } = useLanguage();
 
   return (
     <section
@@ -55,7 +57,7 @@ export default function Hero() {
           <div className="glass-card rounded-[2rem] p-6 sm:p-8 lg:sticky lg:top-24">
             <div className="mb-2 flex items-center justify-between text-xs font-bold tracking-[0.18em]">
               <span className="rounded-md bg-gold px-3 py-1 text-ink">TAXI</span>
-              <span className="text-cream/50">Premium Fleet</span>
+              <span className="text-cream/50">{t("heroExtra.fleet")}</span>
             </div>
             {media.carPhoto ? (
               <img src={media.carPhoto} alt="" className="w-full rounded-xl object-cover" />
@@ -64,7 +66,7 @@ export default function Hero() {
             )}
             <div className="mx-auto mt-1 flex w-fit items-center gap-3 rounded-lg bg-cream px-4 py-2 text-ink">
               <span className="text-xs font-extrabold text-gold-deep">IL</span>
-              <span className="text-base font-extrabold tracking-wide sm:text-lg">David · Nationwide</span>
+              <span className="text-base font-extrabold tracking-wide sm:text-lg">{t("heroExtra.plate")}</span>
             </div>
           </div>
         </div>

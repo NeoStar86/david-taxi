@@ -1,4 +1,7 @@
+import { uiStrings } from "./uiStrings.js";
+
 export const SUPPORTED_LANGS = ["he", "en", "ru", "ar"];
+export { getLocalizedContent } from "./localizedContent.js";
 
 export const LOCALE_META = {
   he: { label: "עברית", dir: "rtl" },
@@ -7,8 +10,12 @@ export const LOCALE_META = {
   ar: { label: "العربية", dir: "rtl" },
 };
 
+function buildDictionary(lang, core) {
+  return { ...uiStrings[lang], ...core };
+}
+
 const dictionaries = {
-  he: {
+  he: buildDictionary("he", {
     nav: { call: "חייג עכשיו", whatsapp: "הזמן ב-WhatsApp", home: "ראשי", calculator: "מחשבון" },
     hero: { chooseVehicle: "בחרו סוג רכב להמשך", passengers: "עד {n} נוסעים" },
     calc: {
@@ -42,8 +49,8 @@ const dictionaries = {
       eta: "זמן נסיעה משוער",
       closing: "אשמח לאישור סופי ולהזמנה. תודה!",
     },
-  },
-  en: {
+  }),
+  en: buildDictionary("en", {
     nav: { call: "Call now", whatsapp: "Book on WhatsApp", home: "Home", calculator: "Calculator" },
     hero: { chooseVehicle: "Choose a vehicle to continue", passengers: "Up to {n} passengers" },
     calc: {
@@ -77,8 +84,8 @@ const dictionaries = {
       eta: "Estimated time",
       closing: "Please confirm and book. Thanks!",
     },
-  },
-  ru: {
+  }),
+  ru: buildDictionary("ru", {
     nav: { call: "Позвонить", whatsapp: "Заказать в WhatsApp", home: "Главная", calculator: "Калькулятор" },
     hero: { chooseVehicle: "Выберите тип автомобиля", passengers: "До {n} пассажиров" },
     calc: {
@@ -112,8 +119,8 @@ const dictionaries = {
       eta: "Примерное время",
       closing: "Жду подтверждения. Спасибо!",
     },
-  },
-  ar: {
+  }),
+  ar: buildDictionary("ar", {
     nav: { call: "اتصل الآن", whatsapp: "احجز عبر WhatsApp", home: "الرئيسية", calculator: "الحاسبة" },
     hero: { chooseVehicle: "اختر نوع المركبة للمتابعة", passengers: "حتى {n} ركاب" },
     calc: {
@@ -147,7 +154,7 @@ const dictionaries = {
       eta: "الوقت التقريبي",
       closing: "أرجو التأكيد والحجز. شكراً!",
     },
-  },
+  }),
 };
 
 function interpolate(template, vars = {}) {

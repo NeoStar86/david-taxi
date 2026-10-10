@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
-import { faqs } from "../content";
+import { useLanguage } from "../context/LanguageContext";
 
 function FaqItem({ item, index, isOpen, onToggle, baseId }) {
   const panelId = `${baseId}-panel-${index}`;
@@ -21,9 +21,7 @@ function FaqItem({ item, index, isOpen, onToggle, baseId }) {
           onClick={onToggle}
           className="flex w-full items-center gap-4 px-5 py-4 text-start transition hover:bg-white/[0.02] sm:px-6 sm:py-5"
         >
-          <span className="flex-1 text-base font-extrabold leading-snug text-cream sm:text-lg">
-            {item.question}
-          </span>
+          <span className="flex-1 text-base font-extrabold leading-snug text-cream sm:text-lg">{item.question}</span>
           <span
             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition ${
               isOpen ? "border-gold/50 bg-gold/15" : "border-white/15 bg-white/5"
@@ -53,6 +51,8 @@ function FaqItem({ item, index, isOpen, onToggle, baseId }) {
 }
 
 export default function Faq() {
+  const { t, content } = useLanguage();
+  const faqs = content.faqs;
   const baseId = useId();
   const [openIndex, setOpenIndex] = useState(0);
 
@@ -62,13 +62,9 @@ export default function Faq() {
 
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
         <div className="text-center">
-          <p className="section-kicker">שאלות נפוצות</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">
-            כל מה שרציתם לדעת
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-cream/70">
-            תשובות קצרות וברורות לפני שמזמינים נסיעה.
-          </p>
+          <p className="section-kicker">{t("faq.kicker")}</p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">{t("faq.title")}</h2>
+          <p className="mt-4 text-lg leading-relaxed text-cream/70">{t("faq.subtitle")}</p>
         </div>
 
         <div className="mt-10 space-y-3">

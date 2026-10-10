@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSiteData } from "../context/SiteDataContext";
+import { useLanguage } from "../context/LanguageContext";
 import { LOCALE_META, SUPPORTED_LANGS } from "../i18n/translations";
 import { changeAdminPassword, logoutAdmin } from "./auth";
 import AdminImageField from "./AdminImageField";
@@ -17,6 +18,7 @@ const inputClass =
   "mt-2 w-full min-h-12 rounded-xl border border-white/15 bg-ink/80 px-4 py-3 text-base outline-none focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
 
 export default function AdminDashboard({ onLogout }) {
+  const { t } = useLanguage();
   const { data, notice, saveAll } = useSiteData();
   const [activeTab, setActiveTab] = useState("general");
   const [draft, setDraft] = useState(data);
@@ -95,15 +97,15 @@ export default function AdminDashboard({ onLogout }) {
       <header className="sticky top-0 z-20 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
           <div>
-            <p className="text-sm font-extrabold">לוח ניהול · דוד מוניות והסעות</p>
-            <p className="text-xs text-cream/60">עדכון תוכן האתר בזמן אמת</p>
+            <p className="text-sm font-extrabold">{t("admin.title")}</p>
+            <p className="text-xs text-cream/60">{t("admin.subtitle")}</p>
           </div>
           <div className="ms-auto flex items-center gap-2">
             <Link to="/" className="btn-secondary min-h-12 px-4 text-sm">
-              צפייה באתר
+              {t("admin.viewSite")}
             </Link>
             <button type="button" onClick={handleLogout} className="btn-outline-gold min-h-12 px-4 text-sm">
-              התנתקות
+              {t("admin.logout")}
             </button>
           </div>
         </div>

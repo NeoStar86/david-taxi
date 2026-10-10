@@ -1,26 +1,29 @@
-function formatDateTime(value) {
+import { t } from "../i18n/translations";
+
+function formatDateTime(value, lang) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString("he-IL", {
+  const locale = lang === "he" ? "he-IL" : lang === "ar" ? "ar-IL" : lang === "ru" ? "ru-RU" : "en-GB";
+  return date.toLocaleString(locale, {
     dateStyle: "short",
     timeStyle: "short",
   });
 }
 
-export function buildBookingWhatsAppUrl(form, site) {
+export function buildBookingWhatsAppUrl(form, site, lang = "he") {
   const lines = [
-    "שלום דוד, אשמח לקבל הצעת מחיר לנסיעה:",
+    t(lang, "bookingWa.intro"),
     "",
-    `*שם מלא:* ${form.fullName.trim()}`,
-    `*טלפון:* ${form.phone.trim()}`,
-    `*נקודת איסוף:* ${form.pickup.trim()}`,
-    `*יעד נסיעה:* ${form.destination.trim()}`,
-    `*תאריך ושעה:* ${formatDateTime(form.dateTime)}`,
+    `*${t(lang, "bookingWa.fullName")}:* ${form.fullName.trim()}`,
+    `*${t(lang, "bookingWa.phone")}:* ${form.phone.trim()}`,
+    `*${t(lang, "bookingWa.pickup")}:* ${form.pickup.trim()}`,
+    `*${t(lang, "bookingWa.destination")}:* ${form.destination.trim()}`,
+    `*${t(lang, "bookingWa.dateTime")}:* ${formatDateTime(form.dateTime, lang)}`,
   ];
 
   if (form.notes.trim()) {
-    lines.push(`*הערות נוספות:* ${form.notes.trim()}`);
+    lines.push(`*${t(lang, "bookingWa.notes")}:* ${form.notes.trim()}`);
   }
 
   const text = encodeURIComponent(lines.join("\n"));

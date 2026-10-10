@@ -5,6 +5,11 @@ function getSite() {
   return loadSiteState().site;
 }
 
+function getLang() {
+  if (typeof window === "undefined") return "he";
+  return localStorage.getItem("site_lang") || "he";
+}
+
 export function openWhatsApp(text) {
   const site = getSite();
   const url = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
@@ -31,9 +36,6 @@ export function buildFareWhatsAppMessage(
     .join("\n");
 }
 
-export const locationShareMessage =
-  "היי דוד, אשמח להזמין מונית. הנה המיקום הנוכחי שלי:\n\n";
-
-export function openLocationShareWhatsApp() {
-  openWhatsApp(locationShareMessage);
+export function openLocationShareWhatsApp(lang = getLang()) {
+  openWhatsApp(translate(lang, "locationShare.message"));
 }

@@ -1,17 +1,16 @@
-import { areaTags } from "../content";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Areas() {
+  const { t, content } = useLanguage();
+  const areaTags = content.areaTags;
+
   return (
     <section id="areas" className="border-y border-white/5 bg-panel py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="text-center">
-          <p className="section-kicker">אזורי פעילות</p>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-cream sm:text-3xl">
-            איפה אנחנו מגיעים
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-cream/65">
-            כיסוי רחב באזורי המרכז, השרון, ירושלים, השפלה ונתב״ג.
-          </p>
+          <p className="section-kicker">{t("areas.kicker")}</p>
+          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-cream sm:text-3xl">{t("areas.title")}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-cream/65">{t("areas.subtitle")}</p>
         </div>
 
         <ul className="mt-8 flex flex-wrap items-center justify-center gap-3">

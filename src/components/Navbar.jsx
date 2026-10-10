@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 import { useSiteData } from "../context/SiteDataContext";
 import CallNow from "./CallNow";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -6,8 +7,9 @@ import { LogoMark } from "./Icons";
 
 export default function Navbar() {
   const { data } = useSiteData();
-  const { site, media, static: staticContent } = data;
-  const { navLinks } = staticContent;
+  const { site, media } = data;
+  const { t, content } = useLanguage();
+  const navLinks = content.navLinks;
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Navbar() {
           <div className="hidden shrink-0 sm:block">
             <LanguageSwitcher />
           </div>
-          <nav className="hidden items-center gap-6 xl:gap-7 lg:flex" aria-label="ניווט ראשי">
+          <nav className="hidden items-center gap-6 xl:gap-7 lg:flex" aria-label={t("navA11y.main")}>
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -61,7 +63,7 @@ export default function Navbar() {
             className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/15 text-cream lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? "סגירת תפריט" : "פתיחת תפריט"}
+            aria-label={open ? t("navA11y.closeMenu") : t("navA11y.openMenu")}
             onClick={() => setOpen((value) => !value)}
           >
             <span className="relative block h-3.5 w-5">
@@ -83,7 +85,7 @@ export default function Navbar() {
         <nav
           id="mobile-menu"
           className="border-t border-white/10 bg-ink px-4 py-3 lg:hidden"
-          aria-label="ניווט לנייד"
+          aria-label={t("navA11y.mobile")}
         >
           <div className="mb-3 sm:hidden">
             <LanguageSwitcher />

@@ -1,10 +1,11 @@
 import { Quote, Star } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 import { useSiteData } from "../context/SiteDataContext";
 
-function StarRating({ rating }) {
+function StarRating({ rating, label }) {
   const stars = Math.max(1, Math.min(5, Number(rating) || 5));
   return (
-    <div className="flex gap-0.5" aria-label={`דירוג ${stars} כוכבים`}>
+    <div className="flex gap-0.5" aria-label={label}>
       {Array.from({ length: 5 }).map((_, index) => (
         <Star
           key={index}
@@ -21,6 +22,7 @@ function StarRating({ rating }) {
 
 export default function Testimonials() {
   const { data } = useSiteData();
+  const { t } = useLanguage();
   const items = data.testimonials.filter((item) => item.visible !== false);
 
   return (
@@ -29,13 +31,9 @@ export default function Testimonials() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="section-kicker">לקוחות ממליצים</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">
-            אמון שנבנה נסיעה אחר נסיעה
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-cream/70">
-            ביקורות אמיתיות מלקוחות שנהנו מנסיעה בטוחה, נוחה ובזמן.
-          </p>
+          <p className="section-kicker">{t("testimonials.kicker")}</p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">{t("testimonials.title")}</h2>
+          <p className="mt-4 text-lg leading-relaxed text-cream/70">{t("testimonials.subtitle")}</p>
         </div>
 
         <div className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] lg:grid lg:grid-cols-3 lg:gap-5 lg:overflow-visible lg:pb-0 [&::-webkit-scrollbar]:hidden">
@@ -49,7 +47,7 @@ export default function Testimonials() {
               </div>
 
               <div className="mt-14">
-                <StarRating rating={item.rating} />
+                <StarRating rating={item.rating} label={t("testimonials.stars", { n: item.rating })} />
                 <blockquote className="mt-4 text-base leading-relaxed text-cream/92 sm:text-[17px]">
                   “{item.quote}”
                 </blockquote>

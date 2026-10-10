@@ -1,10 +1,5 @@
-import {
-  Crown,
-  MapPin,
-  Package,
-  Plane,
-} from "lucide-react";
-import { services } from "../content";
+import { Crown, MapPin, Package, Plane } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 const icons = {
   plane: Plane,
@@ -14,17 +9,16 @@ const icons = {
 };
 
 export default function Services() {
+  const { t, content } = useLanguage();
+  const services = content.services;
+
   return (
     <section id="services" className="bg-ink-soft py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="max-w-2xl">
-          <p className="section-kicker">השירותים שלנו</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">
-            מה אנחנו מציעים
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-cream/70">
-            מוניות והסעות מותאמות אישית — מנתב״ג ועד אירועים, בכל הארץ.
-          </p>
+          <p className="section-kicker">{t("services.kicker")}</p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">{t("services.title")}</h2>
+          <p className="mt-4 text-lg leading-relaxed text-cream/70">{t("services.subtitle")}</p>
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -42,11 +36,8 @@ export default function Services() {
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-cream/70 sm:text-[15px]">
                   {service.description}
                 </p>
-                <a
-                  href="#contact"
-                  className="btn-outline-gold mt-6 min-h-11 px-4 text-sm"
-                >
-                  להזמנת שירות זה
+                <a href="#contact" className="btn-outline-gold mt-6 min-h-11 px-4 text-sm">
+                  {t("services.cta")}
                 </a>
               </article>
             );
