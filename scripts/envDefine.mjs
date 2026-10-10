@@ -1,11 +1,23 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+function adminPasswordFromEnv() {
+  return (
+    process.env.ADMIN_PASSWORD ??
+    process.env.VITE_ADMIN_PASSWORD ??
+    process.env.NEXT_PUBLIC_ADMIN_PASSWORD ??
+    ""
+  );
+}
+
 export function getViteEnvDefine(root) {
+  const adminPassword = adminPasswordFromEnv();
   const define = {
     "import.meta.env.DEV": JSON.stringify(process.env.NODE_ENV !== "production"),
     "import.meta.env.PROD": JSON.stringify(process.env.NODE_ENV === "production"),
     "import.meta.env.MODE": JSON.stringify(process.env.NODE_ENV === "production" ? "production" : "development"),
+    "process.env.ADMIN_PASSWORD": JSON.stringify(adminPassword),
+    "import.meta.env.ADMIN_PASSWORD": JSON.stringify(adminPassword),
     "import.meta.env.VITE_ADMIN_PASSWORD": JSON.stringify(process.env.VITE_ADMIN_PASSWORD ?? ""),
     "import.meta.env.NEXT_PUBLIC_ADMIN_PASSWORD": JSON.stringify(
       process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? "",
@@ -28,8 +40,11 @@ export function getViteEnvDefine(root) {
     ) {
       value = value.slice(1, -1);
     }
-    if (key.startsWith("VITE_") || key === "NEXT_PUBLIC_ADMIN_PASSWORD") {
+    if (key.startsWith("VITE_") || key === "NEXT_PUBLIC_ADMIN_PASSWORD" || key === "ADMIN_PASSWORD") {
       define[`import.meta.env.${key}`] = JSON.stringify(value);
+      if (key === "ADMIN_PASSWORD") {
+        define["process.env.ADMIN_PASSWORD"] = JSON.stringify(value);
+      }
     }
   }
 
