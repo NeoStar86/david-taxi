@@ -24,7 +24,7 @@ export function getViteEnvDefine(root) {
     ) {
       value = value.slice(1, -1);
     }
-    if (key.startsWith("VITE_")) {
+    if (key.startsWith("VITE_") || key === "NEXT_PUBLIC_ADMIN_PASSWORD") {
       define[`import.meta.env.${key}`] = JSON.stringify(value);
     }
   }

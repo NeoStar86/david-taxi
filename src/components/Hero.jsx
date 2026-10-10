@@ -6,10 +6,21 @@ import { SedanArt } from "./Icons";
 
 export default function Hero() {
   const { data } = useSiteData();
-  const { site } = data;
+  const { site, media } = data;
 
   return (
-    <section className="relative overflow-hidden bg-ink text-cream">
+    <section
+      className="relative overflow-hidden bg-ink text-cream"
+      style={
+        media.heroImage
+          ? {
+              backgroundImage: `linear-gradient(rgba(7,7,8,0.82), rgba(7,7,8,0.92)), url(${media.heroImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : undefined
+      }
+    >
       <div className="pointer-events-none absolute -top-24 end-0 h-72 w-72 rounded-full bg-gold/15 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 start-0 h-px w-full bg-gradient-to-l from-transparent via-gold/70 to-transparent" />
 
@@ -25,6 +36,7 @@ export default function Hero() {
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/75 sm:text-xl">
             {site.heroSubtitle}
           </p>
+          {site.address && <p className="mt-3 text-sm text-cream/60">{site.address}</p>}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <CallNow size="lg" className="w-full sm:w-auto" />
             <WhatsAppButton className="w-full sm:w-auto" />
@@ -40,7 +52,11 @@ export default function Hero() {
             <span className="rounded-md bg-gold px-3 py-1 text-ink">TAXI</span>
             <span className="text-cream/50">רכב מרווח</span>
           </div>
-          <SedanArt />
+          {media.carPhoto ? (
+            <img src={media.carPhoto} alt="תמונת רכב" className="w-full rounded-xl object-cover" />
+          ) : (
+            <SedanArt />
+          )}
           <div className="mx-auto mt-1 flex w-fit items-center gap-3 rounded-lg bg-cream px-4 py-2 text-ink">
             <span className="text-xs font-extrabold text-gold-deep">IL</span>
             <span className="text-base font-extrabold tracking-wide sm:text-lg">דוד · כל הארץ</span>

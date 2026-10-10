@@ -5,7 +5,7 @@ import { LogoMark } from "./Icons";
 
 export default function Navbar() {
   const { data } = useSiteData();
-  const { site, static: staticContent } = data;
+  const { site, media, static: staticContent } = data;
   const { navLinks } = staticContent;
   const [open, setOpen] = useState(false);
 
@@ -24,7 +24,11 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/80 text-cream backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
         <a href="#top" className="flex min-w-0 items-center gap-2.5 sm:gap-3" onClick={close}>
-          <LogoMark className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+          {media.logoUrl ? (
+            <img src={media.logoUrl} alt={site.name} className="h-10 w-10 shrink-0 rounded-xl object-cover sm:h-11 sm:w-11" />
+          ) : (
+            <LogoMark className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+          )}
           <span className="min-w-0 leading-tight">
             <span className="block text-sm font-extrabold tracking-tight sm:text-base lg:text-lg">
               {site.name}

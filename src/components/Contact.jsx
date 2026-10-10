@@ -48,6 +48,7 @@ export default function Contact() {
             <p className="mt-4 text-lg leading-relaxed text-cream/70">
               ממלאים את הפרטים, ונפתחת הודעת WhatsApp מוכנה לשליחה. {site.hours}.
             </p>
+            {site.address && <p className="mt-2 text-sm text-cream/65">{site.address}</p>}
             <div className="mt-8 space-y-3 text-sm text-cream/75">
               <p>
                 <span className="font-bold text-cream">טלפון: </span>

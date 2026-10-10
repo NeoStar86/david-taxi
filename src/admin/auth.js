@@ -1,65 +1,33 @@
-const SESSION_KEY = "david-taxi-admin-session";
-const SESSION_MS = 1000 * 60 * 60 * 24;
-const DEFAULT_USERNAME = "david";
+const AUTH_KEY = "david-taxi-admin-authenticated";
 const DEFAULT_PASSWORD = "1234";
 
-export function getAdminUsername() {
-  const configured = import.meta.env.VITE_ADMIN_USERNAME;
-  if (typeof configured === "string" && configured.trim()) {
-    return configured.trim();
+function configuredPassword() {
+  const fromVite = import.meta.env.VITE_ADMIN_PASSWORD;
+  const fromNext = import.meta.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+  for (const value of [fromVite, fromNext]) {
+    if (typeof value === "string" && value.length > 0) {
+      return value;
+    }
   }
-  return DEFAULT_USERNAME;
+  return null;
 }
 
 export function getAdminPassword() {
-  const configured = import.meta.env.VITE_ADMIN_PASSWORD;
-  if (typeof configured === "string" && configured.length > 0) {
-    return configured;
-  }
-  return DEFAULT_PASSWORD;
+  return configuredPassword() ?? DEFAULT_PASSWORD;
 }
 
-export function loginAdmin(username, password) {
-  const expectedUser = getAdminUsername();
-  const expectedPassword = getAdminPassword();
-  const normalizedUser = username.trim();
-
-  if (normalizedUser !== expectedUser || password !== expectedPassword) {
+export function loginAdmin(password) {
+  if (password !== getAdminPassword()) {
     return false;
   }
-
-  const expiresAt = Date.now() + SESSION_MS;
-  localStorage.setItem(
-    SESSION_KEY,
-    JSON.stringify({
-      expiresAt,
-      username: expectedUser,
-      token: btoa(`${expectedUser}:${expiresAt}`),
-    }),
-  );
+  localStorage.setItem(AUTH_KEY, "true");
   return true;
 }
 
 export function logoutAdmin() {
-  localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(AUTH_KEY);
 }
 
 export function isAdminAuthenticated() {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return false;
-    const session = JSON.parse(raw);
-    if (!session?.expiresAt || Date.now() > session.expiresAt) {
-      logoutAdmin();
-      return false;
-    }
-    if (session.username && session.username !== getAdminUsername()) {
-      logoutAdmin();
-      return false;
-    }
-    return true;
-  } catch {
-    logoutAdmin();
-    return false;
-  }
+  return localStorage.getItem(AUTH_KEY) === "true";
 }

@@ -14,6 +14,7 @@ export function loadSiteState() {
       ...defaults,
       ...parsed,
       site: { ...defaults.site, ...parsed.site },
+      media: { ...defaults.media, ...parsed.media },
       availability: { ...defaults.availability, ...parsed.availability },
       fare: {
         ...defaults.fare,
