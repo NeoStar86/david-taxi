@@ -12,7 +12,7 @@ export default function VehiclePicker() {
 
   return (
     <div id="vehicles" className="mt-8">
-      <p className="text-sm font-extrabold text-gold">{t("hero.chooseVehicle")}</p>
+      <p className="text-sm font-extrabold text-gold">{t("select_vehicle_prompt")}</p>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {vehicles.map((vehicle) => {
           const active = selectedVehicleId === vehicle.id;

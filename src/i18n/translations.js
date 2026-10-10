@@ -17,7 +17,7 @@ function buildDictionary(lang, core) {
 const dictionaries = {
   he: buildDictionary("he", {
     nav: { call: "חייג עכשיו", whatsapp: "הזמן ב-WhatsApp", home: "ראשי", calculator: "מחשבון" },
-    hero: { chooseVehicle: "בחרו סוג רכב להמשך", passengers: "עד {n} נוסעים" },
+    hero: { chooseVehicle: "בחרו סוג רכב להמשך", passengers: "עד {n} נוסעים", carPhotoAlt: "תמונת רכב" },
     calc: {
       kicker: "מחשבון אומדן מחיר מהיר",
       title: "כמה תעלה הנסיעה?",
@@ -52,7 +52,11 @@ const dictionaries = {
   }),
   en: buildDictionary("en", {
     nav: { call: "Call now", whatsapp: "Book on WhatsApp", home: "Home", calculator: "Calculator" },
-    hero: { chooseVehicle: "Choose a vehicle to continue", passengers: "Up to {n} passengers" },
+    hero: {
+      chooseVehicle: "Choose a vehicle to continue",
+      passengers: "Up to {n} passengers",
+      carPhotoAlt: "Vehicle photo",
+    },
     calc: {
       kicker: "Quick fare estimator",
       title: "How much will the ride cost?",
@@ -87,7 +91,11 @@ const dictionaries = {
   }),
   ru: buildDictionary("ru", {
     nav: { call: "Позвонить", whatsapp: "Заказать в WhatsApp", home: "Главная", calculator: "Калькулятор" },
-    hero: { chooseVehicle: "Выберите тип автомобиля", passengers: "До {n} пассажиров" },
+    hero: {
+      chooseVehicle: "Выберите тип автомобиля",
+      passengers: "До {n} пассажиров",
+      carPhotoAlt: "Фото автомобиля",
+    },
     calc: {
       kicker: "Быстрый расчёт стоимости",
       title: "Сколько будет стоить поездка?",
@@ -122,7 +130,11 @@ const dictionaries = {
   }),
   ar: buildDictionary("ar", {
     nav: { call: "اتصل الآن", whatsapp: "احجز عبر WhatsApp", home: "الرئيسية", calculator: "الحاسبة" },
-    hero: { chooseVehicle: "اختر نوع المركبة للمتابعة", passengers: "حتى {n} ركاب" },
+    hero: {
+      chooseVehicle: "اختر نوع المركبة للمتابعة",
+      passengers: "حتى {n} ركاب",
+      carPhotoAlt: "صورة المركبة",
+    },
     calc: {
       kicker: "حاسبة تقدير السعر السريعة",
       title: "كم ستكلف الرحلة؟",

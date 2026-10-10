@@ -1,6 +1,13 @@
 /** UI copy shared across landing sections (merged into translations dictionaries). */
 export const uiStrings = {
   he: {
+    hero_title: "שירותי מוניות והסעות לכל חלקי הארץ",
+    hero_subtitle:
+      "זמינות 24/7, הגעה בזמן ורכב חדיש ומרווח. הדרך הבטוחה והנוחה שלך לכל יעד.",
+    badge_text: "דוד מוניות והסעות · זמינות 24/7",
+    select_vehicle_prompt: "בחרו סוג רכב להמשך",
+    hero_address: "ישראל · שירות בפריסה ארצית",
+    hero_taxi_tag: "TAXI",
     services: {
       kicker: "השירותים שלנו",
       title: "מה אנחנו מציעים",
@@ -67,6 +74,13 @@ export const uiStrings = {
     },
   },
   en: {
+    hero_title: "Taxi & transportation services nationwide",
+    hero_subtitle:
+      "24/7 availability, on-time pickup, and a modern spacious vehicle — your safe, comfortable way to every destination.",
+    badge_text: "David Taxi · Available 24/7",
+    select_vehicle_prompt: "Select vehicle type to proceed",
+    hero_address: "Israel · Nationwide coverage",
+    hero_taxi_tag: "TAXI",
     services: {
       kicker: "Our services",
       title: "What we offer",
@@ -133,6 +147,13 @@ export const uiStrings = {
     },
   },
   ru: {
+    hero_title: "Услуги такси и перевозок по всей стране",
+    hero_subtitle:
+      "Круглосуточно, точная подача и новый просторный автомобиль — безопасный и комфортный путь к любой цели.",
+    badge_text: "David Taxi · 24/7",
+    select_vehicle_prompt: "Выберите тип автомобиля для продолжения",
+    hero_address: "Израиль · Обслуживание по всей стране",
+    hero_taxi_tag: "TAXI",
     services: {
       kicker: "Наши услуги",
       title: "Что мы предлагаем",
@@ -199,6 +220,13 @@ export const uiStrings = {
     },
   },
   ar: {
+    hero_title: "خدمات التكسي والنقليات في جميع أنحاء البلاد",
+    hero_subtitle:
+      "متاح 24/7، وصول في الوقت وسيارة حديثة وواسعة — طريقك الآمن والمريح إلى كل وجهة.",
+    badge_text: "David Taxi · متاح 24/7",
+    select_vehicle_prompt: "اختر نوع المركبة للمتابعة",
+    hero_address: "إسرائيل · خدمة على مستوى البلاد",
+    hero_taxi_tag: "TAXI",
     services: {
       kicker: "خدماتنا",
       title: "ماذا نقدم",

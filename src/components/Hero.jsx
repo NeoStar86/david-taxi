@@ -8,7 +8,7 @@ import { SedanArt } from "./Icons";
 
 export default function Hero() {
   const { data } = useSiteData();
-  const { site, media } = data;
+  const { media } = data;
   const { t } = useLanguage();
 
   return (
@@ -32,15 +32,13 @@ export default function Hero() {
           <div>
             <p className="glass-card mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-gold">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-              {site.name} · {site.hours}
+              {t("badge_text")}
             </p>
             <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-              {site.heroTitle}
+              {t("hero_title")}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/75 sm:text-xl">
-              {site.heroSubtitle}
-            </p>
-            {site.address && <p className="mt-3 text-sm text-cream/60">{site.address}</p>}
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/75 sm:text-xl">{t("hero_subtitle")}</p>
+            <p className="mt-3 text-sm text-cream/60">{t("hero_address")}</p>
 
             <VehiclePicker />
 
@@ -56,11 +54,11 @@ export default function Hero() {
 
           <div className="glass-card rounded-[2rem] p-6 sm:p-8 lg:sticky lg:top-24">
             <div className="mb-2 flex items-center justify-between text-xs font-bold tracking-[0.18em]">
-              <span className="rounded-md bg-gold px-3 py-1 text-ink">TAXI</span>
+              <span className="rounded-md bg-gold px-3 py-1 text-ink">{t("hero_taxi_tag")}</span>
               <span className="text-cream/50">{t("heroExtra.fleet")}</span>
             </div>
             {media.carPhoto ? (
-              <img src={media.carPhoto} alt="" className="w-full rounded-xl object-cover" />
+              <img src={media.carPhoto} alt={t("hero.carPhotoAlt")} className="w-full rounded-xl object-cover" />
             ) : (
               <SedanArt />
             )}
