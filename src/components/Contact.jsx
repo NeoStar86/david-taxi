@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { site } from "../content";
+import ShareLocationButton from "./ShareLocationButton";
 import { buildBookingWhatsAppUrl } from "../utils/whatsappBooking";
 
 const emptyForm = {
@@ -34,7 +35,7 @@ export default function Contact() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-14">
           <div>
-            <p className="text-sm font-bold text-gold">צור קשר</p>
+            <p className="section-kicker">צור קשר</p>
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
               להזמנת נסיעה / קבלת הצעת מחיר
             </h2>
@@ -64,7 +65,7 @@ export default function Contact() {
 
           <form
             onSubmit={handleSubmit}
-            className="rounded-[2rem] border border-gold/25 bg-panel p-6 sm:p-8"
+            className="glass-card rounded-[2rem] border-gold/25 p-6 sm:p-8"
             noValidate
           >
             <div className="grid gap-5 sm:grid-cols-2">
@@ -123,6 +124,10 @@ export default function Contact() {
                 />
               </label>
 
+              <div className="sm:col-span-2">
+                <ShareLocationButton fullWidth />
+              </div>
+
               <label className="block sm:col-span-2">
                 <span className="text-sm font-bold text-cream">יעד נסיעה</span>
                 <input
@@ -153,7 +158,7 @@ export default function Contact() {
 
             <button
               type="submit"
-              className="mt-6 flex w-full min-h-14 items-center justify-center rounded-full bg-[#25D366] px-6 text-base font-extrabold text-white shadow-[0_12px_30px_rgba(37,211,102,0.25)] transition hover:bg-[#1da851] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
+              className="btn-whatsapp mt-6 w-full min-h-14 px-6 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
             >
               שלח לבדיקת מחיר ב-WhatsApp
             </button>

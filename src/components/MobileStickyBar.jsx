@@ -1,5 +1,6 @@
-import { MessageCircle, Phone } from "lucide-react";
+import { MapPinned, MessageCircle, Phone } from "lucide-react";
 import { site } from "../content";
+import { openLocationShareWhatsApp } from "../utils/whatsappLinks";
 
 export default function MobileStickyBar() {
   return (
@@ -8,10 +9,18 @@ export default function MobileStickyBar() {
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       aria-label="פעולות מהירות"
     >
-      <div className="flex h-16">
+      <button
+        type="button"
+        onClick={openLocationShareWhatsApp}
+        className="flex min-h-12 w-full items-center justify-center gap-2 border-b border-white/10 bg-ink-soft/95 px-4 text-sm font-bold text-cream transition active:bg-white/5"
+      >
+        <MapPinned className="h-5 w-5 text-gold" strokeWidth={2.2} aria-hidden="true" />
+        שתף מיקום איסוף ב-WhatsApp
+      </button>
+      <div className="flex h-14">
         <a
           href={`tel:${site.phoneTel}`}
-          className="flex flex-1 items-center justify-center gap-2 bg-gold text-base font-extrabold text-ink transition active:bg-gold-deep"
+          className="flex min-h-14 flex-1 items-center justify-center gap-2 bg-gold text-base font-extrabold text-ink transition active:bg-gold-deep"
         >
           <Phone className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />
           חייג עכשיו
@@ -20,7 +29,7 @@ export default function MobileStickyBar() {
           href={`https://wa.me/${site.whatsapp}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-1 items-center justify-center gap-2 bg-[#25D366] text-base font-extrabold text-white transition active:bg-[#1da851]"
+          className="flex min-h-14 flex-1 items-center justify-center gap-2 bg-[#25D366] text-base font-extrabold text-white transition active:bg-[#1da851]"
         >
           <MessageCircle className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />
           WhatsApp

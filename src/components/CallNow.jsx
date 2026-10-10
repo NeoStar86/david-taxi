@@ -10,7 +10,7 @@ export default function CallNow({ size = "md", className = "" }) {
   return (
     <a
       href={`tel:${site.phoneTel}`}
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-gold font-extrabold text-ink shadow-[0_10px_30px_rgba(245,197,24,0.28)] transition hover:bg-gold-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
+      className={`btn-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
     >
       <PhoneIcon />
       חייג עכשיו
@@ -22,7 +22,7 @@ export function WhatsAppButton({ size = "lg", className = "" }) {
   return (
     <a
       href={`https://wa.me/${site.whatsapp}`}
-      className={`inline-flex items-center justify-center gap-2 rounded-full border border-cream/30 font-bold text-cream transition hover:border-gold hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
+      className={`btn-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
     >
       <span className="text-[#25D366]">
         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">

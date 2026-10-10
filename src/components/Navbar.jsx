@@ -18,7 +18,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/95 text-cream backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/80 text-cream backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
         <a href="#top" className="flex min-w-0 items-center gap-2.5 sm:gap-3" onClick={close}>
           <LogoMark className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />

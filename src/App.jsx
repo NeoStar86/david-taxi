@@ -2,6 +2,7 @@ import Advantages from "./components/Advantages";
 import Areas from "./components/Areas";
 import Contact from "./components/Contact";
 import Faq from "./components/Faq";
+import FareCalculator from "./components/FareCalculator";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import MobileStickyBar from "./components/MobileStickyBar";
@@ -18,6 +19,7 @@ export default function App() {
         <Services />
         <Advantages />
         <Areas />
+        <FareCalculator />
         <Testimonials />
         <Faq />
         <Contact />

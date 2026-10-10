@@ -21,7 +21,7 @@ export default function Advantages() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="max-w-2xl">
-          <p className="text-sm font-bold text-gold">למה לבחור בדוד?</p>
+          <p className="section-kicker">למה לבחור בדוד?</p>
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">
             היתרונות שמבדילים אותנו
           </h2>
@@ -33,7 +33,7 @@ export default function Advantages() {
             return (
               <article
                 key={item.title}
-                className="rounded-3xl border border-white/10 bg-ink-soft/90 p-6 backdrop-blur-sm transition hover:border-gold/30 sm:p-7"
+                className="glass-card glass-card-hover p-6 sm:p-7"
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gold/15 text-gold">
                   <Icon className="h-5 w-5" strokeWidth={2.2} aria-hidden="true" />

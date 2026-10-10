@@ -1,5 +1,7 @@
 import { site } from "../content";
 import CallNow, { WhatsAppButton } from "./CallNow";
+import SaveContactButton from "./SaveContactButton";
+import ShareLocationButton from "./ShareLocationButton";
 import { SedanArt } from "./Icons";
 
 export default function Hero() {
@@ -10,7 +12,7 @@ export default function Hero() {
 
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
         <div>
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-bold text-gold">
+          <p className="glass-card mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-gold">
             <span className="h-1.5 w-1.5 rounded-full bg-gold" />
             {site.name} · {site.hours}
           </p>
@@ -24,9 +26,13 @@ export default function Hero() {
             <CallNow size="lg" className="w-full sm:w-auto" />
             <WhatsAppButton className="w-full sm:w-auto" />
           </div>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <SaveContactButton className="w-full sm:w-auto" />
+            <ShareLocationButton className="w-full md:hidden" fullWidth />
+          </div>
         </div>
 
-        <div className="rounded-[2rem] border border-white/10 bg-panel p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:p-8">
+        <div className="glass-card rounded-[2rem] p-6 sm:p-8">
           <div className="mb-2 flex items-center justify-between text-xs font-bold tracking-[0.18em]">
             <span className="rounded-md bg-gold px-3 py-1 text-ink">TAXI</span>
             <span className="text-cream/50">רכב מרווח</span>
