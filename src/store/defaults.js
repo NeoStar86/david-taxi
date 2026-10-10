@@ -33,9 +33,6 @@ export function createDefaultSiteState() {
       carPhoto: "",
       logoUrl: "",
     },
-    availability: {
-      isAvailable: true,
-    },
     announcement: {
       enabled: false,
       message: "הנחה מיוחדת להזמנות הלילה!",

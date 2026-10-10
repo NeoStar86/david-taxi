@@ -127,33 +127,6 @@ export default function AdminDashboard({ onLogout }) {
                 </div>
 
                 <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-sm font-extrabold">סטטוס זמינות חי</p>
-                      <p className="mt-1 text-xs text-cream/60">מוצג בכותרת האתר ללקוחות בזמן אמת</p>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={draft.availability.isAvailable}
-                      onClick={() =>
-                        persist({
-                          ...draft,
-                          availability: { isAvailable: !draft.availability.isAvailable },
-                        })
-                      }
-                      className={`min-h-12 shrink-0 rounded-full px-5 text-sm font-extrabold transition ${
-                        draft.availability.isAvailable
-                          ? "bg-emerald-500/20 text-emerald-200 ring-2 ring-emerald-400/40"
-                          : "bg-red-500/20 text-red-200 ring-2 ring-red-400/40"
-                      }`}
-                    >
-                      {draft.availability.isAvailable ? "זמין כעת לנסיעות" : "לא זמין כעת"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
                   <p className="text-sm font-extrabold">באנר מבצעים מתחלף</p>
                   <label className="mt-3 flex items-center gap-3">
                     <input

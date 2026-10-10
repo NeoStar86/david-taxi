@@ -27,8 +27,6 @@ export function SiteDataProvider({ children }) {
       notice,
       setNotice,
       updateSite: (patch) => setData((current) => ({ ...current, site: { ...current.site, ...patch } })),
-      setAvailability: (isAvailable) =>
-        setData((current) => ({ ...current, availability: { isAvailable } })),
       setFare: (fare) => setData((current) => ({ ...current, fare: { ...current.fare, ...fare } })),
       setTestimonials: (testimonials) => setData((current) => ({ ...current, testimonials })),
       addLead: ({ source, payload }) =>

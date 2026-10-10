@@ -10,12 +10,12 @@ export function loadSiteState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaults;
     const parsed = JSON.parse(raw);
+    const { availability: _legacyAvailability, ...stored } = parsed;
     return {
       ...defaults,
-      ...parsed,
+      ...stored,
       site: { ...defaults.site, ...parsed.site },
       media: { ...defaults.media, ...parsed.media },
-      availability: { ...defaults.availability, ...parsed.availability },
       announcement: { ...defaults.announcement, ...parsed.announcement },
       analytics: { ...defaults.analytics, ...parsed.analytics },
       fare: {
@@ -34,7 +34,8 @@ export function loadSiteState() {
 }
 
 export function saveSiteState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const { availability: _removed, ...persisted } = state;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
 }
 
 export function createLead({ source, payload }) {
