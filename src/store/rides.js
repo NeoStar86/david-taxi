@@ -1,4 +1,12 @@
-export const RIDE_STATUSES = ["מתוכננת", "בוצעה", "למכירה/העברה", "בוטלה"];
+export const RIDE_STATUS_SOLD_TO_DRIVER = "נמכרה לנהג";
+
+export const RIDE_STATUSES = [
+  "מתוכננת",
+  "בוצעה",
+  "למכירה/העברה",
+  RIDE_STATUS_SOLD_TO_DRIVER,
+  "בוטלה",
+];
 
 export const PAYMENT_METHODS = ["מזומן", "אשראי"];
 
@@ -32,6 +40,8 @@ function rideFieldDefaults() {
     luggageDetails: "",
     flightNumber: "",
     status: "מתוכננת",
+    commissionPaid: false,
+    commissionPaidAt: "",
   };
 }
 
@@ -73,6 +83,12 @@ export function normalizeRide(ride, orderNumberFallback) {
   }
   if (!withOrder.pickup && withOrder.origin) {
     withOrder.pickup = withOrder.origin;
+  }
+  if (withOrder.commissionPaid == null) {
+    withOrder.commissionPaid = false;
+  }
+  if (withOrder.status === RIDE_STATUS_SOLD_TO_DRIVER && withOrder.commissionPaid && !withOrder.commissionPaidAt) {
+    withOrder.commissionPaidAt = withOrder.createdAt || "";
   }
 
   return withOrder;
@@ -180,6 +196,90 @@ export function isRideInMonth(ride, year, monthIndex) {
   const date = new Date(raw);
   if (Number.isNaN(date.getTime())) return false;
   return date.getFullYear() === year && date.getMonth() === monthIndex;
+}
+
+export function isCommissionPending(ride) {
+  return ride.status === RIDE_STATUS_SOLD_TO_DRIVER && !ride.commissionPaid;
+}
+
+export function isCommissionCollected(ride) {
+  if (ride.status === "בוצעה") return true;
+  if (ride.status === RIDE_STATUS_SOLD_TO_DRIVER && ride.commissionPaid) return true;
+  return false;
+}
+
+export function isRideOnDay(ride, year, monthIndex, day) {
+  const raw = ride.dateTime || ride.createdAt;
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return false;
+  return (
+    date.getFullYear() === year && date.getMonth() === monthIndex && date.getDate() === day
+  );
+}
+
+export function computePendingCommissions(rides = []) {
+  const pendingRides = rides.filter(isCommissionPending);
+  const byDriver = new Map();
+
+  for (const ride of pendingRides) {
+    const driver = String(ride.assignedDriverName ?? "").trim() || "נהג לא צוין";
+    const amount = computeCommissionAmount(ride);
+    if (!byDriver.has(driver)) {
+      byDriver.set(driver, { driverName: driver, total: 0, rides: [] });
+    }
+    const entry = byDriver.get(driver);
+    entry.total += amount;
+    entry.rides.push({
+      id: ride.id,
+      orderId: ride.orderId,
+      amount,
+      clientName: ride.clientName,
+    });
+  }
+
+  const drivers = [...byDriver.values()].sort((a, b) => b.total - a.total);
+  const grandTotal = drivers.reduce((sum, row) => sum + row.total, 0);
+  return { drivers, grandTotal, count: pendingRides.length };
+}
+
+export function computeMonthlyRevenueMetrics(rides = [], referenceDate = new Date()) {
+  const year = referenceDate.getFullYear();
+  const month = referenceDate.getMonth();
+  const inMonth = rides.filter((ride) => isRideInMonth(ride, year, month));
+
+  const finishedStatuses = new Set(["בוצעה", RIDE_STATUS_SOLD_TO_DRIVER]);
+  const finished = inMonth.filter((ride) => finishedStatuses.has(ride.status));
+
+  const grossRevenue = finished.reduce(
+    (sum, ride) => sum + parsePriceNumber(ride.basePrice || ride.agreedPrice),
+    0,
+  );
+
+  const netCommissionEarned = inMonth
+    .filter(isCommissionCollected)
+    .reduce((sum, ride) => sum + computeCommissionAmount(ride), 0);
+
+  const completedCount = inMonth.filter((ride) => ride.status === "בוצעה").length;
+
+  return { grossRevenue, netCommissionEarned, completedCount, finishedCount: finished.length };
+}
+
+export function computeTodaySummary(rides = [], referenceDate = new Date()) {
+  const year = referenceDate.getFullYear();
+  const month = referenceDate.getMonth();
+  const day = referenceDate.getDate();
+  const todayRides = rides.filter((ride) => isRideOnDay(ride, year, month, day));
+
+  const scheduled = todayRides.filter((ride) => ride.status === "מתוכננת").length;
+  const done = todayRides.filter(
+    (ride) => ride.status === "בוצעה" || ride.status === RIDE_STATUS_SOLD_TO_DRIVER,
+  ).length;
+  const gross = todayRides
+    .filter((ride) => ride.status === "בוצעה" || ride.status === RIDE_STATUS_SOLD_TO_DRIVER)
+    .reduce((sum, ride) => sum + parsePriceNumber(ride.basePrice || ride.agreedPrice), 0);
+  const pendingToday = todayRides.filter(isCommissionPending).length;
+
+  return { total: todayRides.length, scheduled, done, gross, pendingToday };
 }
 
 export function filterRides(rides, query) {

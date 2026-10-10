@@ -35,6 +35,8 @@ export function downloadRidesCsv(rides, filename = "david-taxi-rides.csv") {
     "netProfit",
     "assignedDriverName",
     "status",
+    "commissionPaid",
+    "commissionPaidAt",
   ];
 
   const rows = rides.map((ride) => {

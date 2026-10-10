@@ -1,3 +1,11 @@
+export const SHARE_TEMPLATE_STANDARD = "standard";
+export const SHARE_TEMPLATE_URGENT = "urgent";
+
+export const SHARE_TEMPLATES = [
+  { id: SHARE_TEMPLATE_STANDARD, label: "הצעת נסיעה רגילה" },
+  { id: SHARE_TEMPLATE_URGENT, label: "🚨 נסיעה דחופה לעכשיו" },
+];
+
 function formatShareDateTime(dateTime) {
   if (!dateTime) {
     return { dayLine: "—", timeLine: "—" };
@@ -22,14 +30,24 @@ function dash(value, fallback = "—") {
 }
 
 /** Public driver-group message only — no commission, profit, or internal accounting. */
-export function buildDriverGroupShareText(ride) {
+export function buildDriverGroupShareText(ride, templateId = SHARE_TEMPLATE_STANDARD) {
   const orderLabel = ride.orderId || (ride.orderNumber ? `#${ride.orderNumber}` : "#—");
   const { dayLine, timeLine } = formatShareDateTime(ride.dateTime);
   const price = ride.basePrice || ride.agreedPrice;
   const priceDisplay = price ? String(price).replace(/\s/g, "") : "—";
   const payment = ride.paymentMethod || "מזומן";
 
-  const lines = [
+  const lines = [];
+
+  if (templateId === SHARE_TEMPLATE_URGENT) {
+    lines.push(
+      "🚨 *נסיעה דחופה לעכשיו!*",
+      "נדרש נהג פנוי *מיידית* — אנא צרו קשר בהקדם",
+      "",
+    );
+  }
+
+  lines.push(
     `🚕 נסיעה ${orderLabel} – מוניות דוד`,
     "────────────────",
     `📅 ${dayLine}`,
@@ -39,7 +57,7 @@ export function buildDriverGroupShareText(ride) {
     `🏁 יעד: ${dash(ride.destination)}`,
     `👥 נוסעים: ${dash(ride.passengersCount, "לא צוין")}`,
     `🧳 מטען: ${dash(ride.luggageDetails, "לא צוין")}`,
-  ];
+  );
 
   const flight = String(ride.flightNumber ?? "").trim();
   if (flight) {
@@ -54,11 +72,20 @@ export function buildDriverGroupShareText(ride) {
     `📞 ${dash(ride.phone)}`,
   );
 
+  if (templateId === SHARE_TEMPLATE_URGENT) {
+    lines.push("", "⚡ *עדיפות גבוהה — נסיעה לעכשיו*");
+  }
+
   return lines.join("\n");
 }
 
-export function shareRideToDriverGroup(ride) {
-  const text = buildDriverGroupShareText(ride);
+export function openDriverGroupShare(ride, templateId = SHARE_TEMPLATE_STANDARD) {
+  const text = buildDriverGroupShareText(ride, templateId);
   const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
   window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/** @deprecated Use openDriverGroupShare with template modal */
+export function shareRideToDriverGroup(ride) {
+  openDriverGroupShare(ride, SHARE_TEMPLATE_STANDARD);
 }
