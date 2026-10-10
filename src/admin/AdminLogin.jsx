@@ -9,12 +9,16 @@ export default function AdminLogin({ onSuccess }) {
     event.preventDefault();
     setError("");
 
-    if (!loginAdmin(password)) {
+    try {
+      const ok = loginAdmin(password);
+      if (!ok) {
+        setError("סיסמה שגויה, נסה שוב");
+        return;
+      }
+      onSuccess();
+    } catch {
       setError("סיסמה שגויה, נסה שוב");
-      return;
     }
-
-    onSuccess();
   }
 
   return (

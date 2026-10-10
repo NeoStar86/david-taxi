@@ -6,6 +6,10 @@ export function getViteEnvDefine(root) {
     "import.meta.env.DEV": JSON.stringify(process.env.NODE_ENV !== "production"),
     "import.meta.env.PROD": JSON.stringify(process.env.NODE_ENV === "production"),
     "import.meta.env.MODE": JSON.stringify(process.env.NODE_ENV === "production" ? "production" : "development"),
+    "import.meta.env.VITE_ADMIN_PASSWORD": JSON.stringify(process.env.VITE_ADMIN_PASSWORD ?? ""),
+    "import.meta.env.NEXT_PUBLIC_ADMIN_PASSWORD": JSON.stringify(
+      process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? "",
+    ),
   };
 
   const envPath = path.join(root, ".env");
