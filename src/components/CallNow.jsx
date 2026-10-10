@@ -1,4 +1,4 @@
-import { site } from "../content";
+import { useSiteData } from "../context/SiteDataContext";
 import { PhoneIcon } from "./Icons";
 
 const sizes = {
@@ -7,6 +7,9 @@ const sizes = {
 };
 
 export default function CallNow({ size = "md", className = "" }) {
+  const { data } = useSiteData();
+  const { site } = data;
+
   return (
     <a
       href={`tel:${site.phoneTel}`}
@@ -19,6 +22,9 @@ export default function CallNow({ size = "md", className = "" }) {
 }
 
 export function WhatsAppButton({ size = "lg", className = "" }) {
+  const { data } = useSiteData();
+  const { site } = data;
+
   return (
     <a
       href={`https://wa.me/${site.whatsapp}`}

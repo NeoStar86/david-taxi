@@ -5,6 +5,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
+import { getViteEnvDefine } from "./envDefine.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = path.join(root, "dist");
@@ -33,7 +34,13 @@ function resolveFile(urlPath) {
     path.join(dist, clean === "/" ? "index.html" : clean),
     path.join(root, "public", clean),
   ];
-  return candidates.find((file) => existsSync(file) && statSync(file).isFile());
+  const file = candidates.find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
+  if (file) return file;
+  if (!path.extname(clean)) {
+    const spaIndex = path.join(dist, "index.html");
+    if (existsSync(spaIndex)) return spaIndex;
+  }
+  return null;
 }
 
 await writeHtml();
@@ -60,6 +67,7 @@ const ctx = await esbuild.context({
   format: "esm",
   jsx: "automatic",
   loader: { ".js": "jsx" },
+  define: getViteEnvDefine(root),
   plugins: [ignoreCss],
 });
 

@@ -1,10 +1,13 @@
-import { site } from "../content";
+import { useSiteData } from "../context/SiteDataContext";
 import CallNow, { WhatsAppButton } from "./CallNow";
 import SaveContactButton from "./SaveContactButton";
 import ShareLocationButton from "./ShareLocationButton";
 import { SedanArt } from "./Icons";
 
 export default function Hero() {
+  const { data } = useSiteData();
+  const { site } = data;
+
   return (
     <section className="relative overflow-hidden bg-ink text-cream">
       <div className="pointer-events-none absolute -top-24 end-0 h-72 w-72 rounded-full bg-gold/15 blur-3xl" />
@@ -17,10 +20,10 @@ export default function Hero() {
             {site.name} · {site.hours}
           </p>
           <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-            שירותי מוניות והסעות לכל חלקי הארץ
+            {site.heroTitle}
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream/75 sm:text-xl">
-            זמינות 24/7, הגעה בזמן ורכב חדיש ומרווח. הדרך הבטוחה והנוחה שלך לכל יעד.
+            {site.heroSubtitle}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <CallNow size="lg" className="w-full sm:w-auto" />

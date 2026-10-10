@@ -1,7 +1,10 @@
-import { site } from "../content";
+import { useSiteData } from "../context/SiteDataContext";
 import SaveContactButton from "./SaveContactButton";
 
 export default function Footer() {
+  const { data } = useSiteData();
+  const { site } = data;
+
   return (
     <footer className="border-t border-white/10 bg-ink pb-32 text-cream md:pb-0">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
@@ -24,6 +27,11 @@ export default function Footer() {
             >
               WhatsApp
             </a>
+            {site.email && (
+              <a href={`mailto:${site.email}`} className="hover:text-gold">
+                {site.email}
+              </a>
+            )}
             <span>{site.hours}</span>
           </div>
         </div>

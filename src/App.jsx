@@ -1,31 +1,13 @@
-import Advantages from "./components/Advantages";
-import Areas from "./components/Areas";
-import Contact from "./components/Contact";
-import Faq from "./components/Faq";
-import FareCalculator from "./components/FareCalculator";
-import Footer from "./components/Footer";
-import Hero from "./components/Hero";
-import MobileStickyBar from "./components/MobileStickyBar";
-import Navbar from "./components/Navbar";
-import Services from "./components/Services";
-import Testimonials from "./components/Testimonials";
+import { Navigate, Route, Routes } from "react-router-dom";
+import AdminPage from "./pages/AdminPage";
+import LandingApp from "./pages/LandingApp";
 
 export default function App() {
   return (
-    <div id="top" className="min-h-screen bg-ink text-cream">
-      <Navbar />
-      <main>
-        <Hero />
-        <Services />
-        <Advantages />
-        <Areas />
-        <FareCalculator />
-        <Testimonials />
-        <Faq />
-        <Contact />
-      </main>
-      <Footer />
-      <MobileStickyBar />
-    </div>
+    <Routes>
+      <Route path="/" element={<LandingApp />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

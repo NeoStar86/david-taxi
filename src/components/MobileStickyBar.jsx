@@ -1,8 +1,11 @@
 import { MapPinned, MessageCircle, Phone } from "lucide-react";
-import { site } from "../content";
+import { useSiteData } from "../context/SiteDataContext";
 import { openLocationShareWhatsApp } from "../utils/whatsappLinks";
 
 export default function MobileStickyBar() {
+  const { data } = useSiteData();
+  const { site } = data;
+
   return (
     <div
       className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-ink/95 backdrop-blur md:hidden"

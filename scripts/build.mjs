@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
+import { getViteEnvDefine } from "./envDefine.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = path.join(root, "dist");
@@ -27,6 +28,7 @@ await esbuild.build({
   jsx: "automatic",
   minify: true,
   loader: { ".js": "jsx" },
+  define: getViteEnvDefine(root),
   plugins: [
     {
       name: "ignore-css",

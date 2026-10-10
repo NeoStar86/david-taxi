@@ -1,25 +1,36 @@
 import { Calculator, Clock3, Route } from "lucide-react";
 import { useMemo, useState } from "react";
-import {
-  destinationSuggestions,
-  estimateFare,
-  formatEstimate,
-  originSuggestions,
-} from "../data/fareEstimates";
+import { useSiteData } from "../context/SiteDataContext";
+import { estimateFareFromRoutes, formatEstimate } from "../utils/fare";
 import { buildFareWhatsAppMessage, openWhatsApp } from "../utils/whatsappLinks";
 
 const fieldClass =
   "mt-2 w-full min-h-12 rounded-xl border border-white/15 bg-ink/80 px-4 py-3 text-base text-cream outline-none transition placeholder:text-cream/35 focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
 
 export default function FareCalculator() {
-  const [origin, setOrigin] = useState("תל אביב");
-  const [destination, setDestination] = useState('נתב"ג');
+  const { data, addLead } = useSiteData();
+  const { fare } = data;
+  const [origin, setOrigin] = useState(fare.originSuggestions[0] ?? "תל אביב");
+  const [destination, setDestination] = useState(fare.destinationSuggestions[0] ?? 'נתב"ג');
 
-  const estimate = useMemo(() => estimateFare(origin, destination), [origin, destination]);
+  const estimate = useMemo(
+    () => estimateFareFromRoutes(fare.routes, origin, destination),
+    [fare.routes, origin, destination],
+  );
   const formatted = useMemo(() => formatEstimate(estimate), [estimate]);
 
   function handleWhatsAppOrder() {
     if (estimate.error) return;
+    addLead({
+      source: "מחשבון מחיר",
+      payload: {
+        origin: estimate.origin,
+        destination: estimate.destination,
+        min: estimate.min,
+        max: estimate.max,
+        minutes: estimate.minutes,
+      },
+    });
     openWhatsApp(buildFareWhatsAppMessage(estimate));
   }
 
@@ -50,7 +61,7 @@ export default function FareCalculator() {
                 placeholder="לדוגמה: תל אביב"
               />
               <datalist id="fare-origin-list">
-                {originSuggestions.map((city) => (
+                {fare.originSuggestions.map((city) => (
                   <option key={city} value={city} />
                 ))}
               </datalist>
@@ -66,7 +77,7 @@ export default function FareCalculator() {
                 placeholder='לדוגמה: נתב"ג'
               />
               <datalist id="fare-destination-list">
-                {destinationSuggestions.map((city) => (
+                {fare.destinationSuggestions.map((city) => (
                   <option key={city} value={city} />
                 ))}
               </datalist>

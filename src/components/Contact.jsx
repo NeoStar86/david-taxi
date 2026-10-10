@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { site } from "../content";
+import { useSiteData } from "../context/SiteDataContext";
 import ShareLocationButton from "./ShareLocationButton";
 import { buildBookingWhatsAppUrl } from "../utils/whatsappBooking";
 
@@ -16,6 +16,8 @@ const fieldClass =
   "mt-2 w-full rounded-xl border border-white/15 bg-ink px-4 py-3 text-base text-cream outline-none transition placeholder:text-cream/35 focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
 
 export default function Contact() {
+  const { data, addLead } = useSiteData();
+  const { site } = data;
   const [form, setForm] = useState(emptyForm);
 
   function updateField(field) {
@@ -26,7 +28,11 @@ export default function Contact() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    const url = buildBookingWhatsAppUrl(form);
+    addLead({
+      source: "טופס הזמנה",
+      payload: { ...form },
+    });
+    const url = buildBookingWhatsAppUrl(form, site);
     window.open(url, "_blank", "noopener,noreferrer");
   }
 

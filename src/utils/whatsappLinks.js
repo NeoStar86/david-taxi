@@ -1,6 +1,11 @@
-import { site } from "../content";
+import { loadSiteState } from "../store/siteStorage";
+
+function getSite() {
+  return loadSiteState().site;
+}
 
 export function openWhatsApp(text) {
+  const site = getSite();
   const url = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }

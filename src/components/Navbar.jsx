@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { navLinks, site } from "../content";
+import { useSiteData } from "../context/SiteDataContext";
 import CallNow from "./CallNow";
 import { LogoMark } from "./Icons";
 
 export default function Navbar() {
+  const { data } = useSiteData();
+  const { site, static: staticContent } = data;
+  const { navLinks } = staticContent;
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

@@ -1,6 +1,7 @@
-import { site } from "../content";
+import { loadSiteState } from "../store/siteStorage";
 
 export function downloadDavidContact() {
+  const site = loadSiteState().site;
   const vcard = [
     "BEGIN:VCARD",
     "VERSION:3.0",
@@ -8,6 +9,7 @@ export function downloadDavidContact() {
     "FN:דוד מוניות והסעות",
     `ORG:${site.nameEn}`,
     `TEL;TYPE=CELL,VOICE:${site.phoneTel}`,
+    `EMAIL:${site.email ?? ""}`,
     "NOTE:מוניות והסעות 24/7",
     "END:VCARD",
   ].join("\r\n");

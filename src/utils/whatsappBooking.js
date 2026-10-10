@@ -1,5 +1,3 @@
-import { site } from "../content";
-
 function formatDateTime(value) {
   if (!value) return "";
   const date = new Date(value);
@@ -10,7 +8,7 @@ function formatDateTime(value) {
   });
 }
 
-export function buildBookingWhatsAppUrl(form) {
+export function buildBookingWhatsAppUrl(form, site) {
   const lines = [
     "שלום דוד, אשמח לקבל הצעת מחיר לנסיעה:",
     "",
