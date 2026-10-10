@@ -1,24 +1,32 @@
 const SESSION_KEY = "david-taxi-admin-session";
 const SESSION_MS = 1000 * 60 * 60 * 24;
+const DEFAULT_USERNAME = "david";
+const DEFAULT_PASSWORD = "1234";
 
 export function getAdminUsername() {
-  return import.meta.env.VITE_ADMIN_USERNAME ?? "david";
+  const configured = import.meta.env.VITE_ADMIN_USERNAME;
+  if (typeof configured === "string" && configured.trim()) {
+    return configured.trim();
+  }
+  return DEFAULT_USERNAME;
 }
 
 export function getAdminPassword() {
-  return import.meta.env.VITE_ADMIN_PASSWORD ?? "";
-}
-
-export function isAdminConfigured() {
-  return Boolean(getAdminUsername() && getAdminPassword());
+  const configured = import.meta.env.VITE_ADMIN_PASSWORD;
+  if (typeof configured === "string" && configured.length > 0) {
+    return configured;
+  }
+  return DEFAULT_PASSWORD;
 }
 
 export function loginAdmin(username, password) {
   const expectedUser = getAdminUsername();
   const expectedPassword = getAdminPassword();
+  const normalizedUser = username.trim();
 
-  if (!expectedPassword) return false;
-  if (username.trim() !== expectedUser || password !== expectedPassword) return false;
+  if (normalizedUser !== expectedUser || password !== expectedPassword) {
+    return false;
+  }
 
   const expiresAt = Date.now() + SESSION_MS;
   localStorage.setItem(

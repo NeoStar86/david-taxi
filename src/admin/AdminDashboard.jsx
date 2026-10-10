@@ -14,7 +14,7 @@ const tabs = [
 const inputClass =
   "mt-2 w-full min-h-12 rounded-xl border border-white/15 bg-ink/80 px-4 py-3 text-base outline-none focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ onLogout }) {
   const { data, notice, setNotice, saveAll, updateLeadStatus } = useSiteData();
   const [tab, setTab] = useState("general");
   const [draft, setDraft] = useState(data);
@@ -23,13 +23,13 @@ export default function AdminDashboard() {
     setDraft(data);
   }, [data]);
 
-  function saveDraft() {
-    saveAll(draft);
+  function saveDraft(nextDraft = draft) {
+    saveAll({ ...nextDraft, leads: data.leads });
   }
 
   function logout() {
     logoutAdmin();
-    window.location.reload();
+    onLogout?.();
   }
 
   return (
@@ -399,12 +399,14 @@ export default function AdminDashboard() {
                 className={`mt-5 min-h-12 rounded-full px-6 text-sm font-extrabold transition ${
                   draft.availability.isAvailable ? "bg-gold text-ink" : "bg-red-500/90 text-white"
                 }`}
-                onClick={() =>
-                  setDraft((current) => ({
-                    ...current,
-                    availability: { isAvailable: !current.availability.isAvailable },
-                  }))
-                }
+                onClick={() => {
+                  const nextDraft = {
+                    ...draft,
+                    availability: { isAvailable: !draft.availability.isAvailable },
+                  };
+                  setDraft(nextDraft);
+                  saveDraft(nextDraft);
+                }}
               >
                 {draft.availability.isAvailable ? "זמין כעת נסיעות" : "לא זמין כעת"}
               </button>
@@ -413,18 +415,15 @@ export default function AdminDashboard() {
 
           {tab === "leads" && (
             <div className="space-y-3">
-              {draft.leads.length === 0 && <p className="text-sm text-cream/60">אין פניות עדיין.</p>}
-              {draft.leads.map((lead) => (
+              {data.leads.length === 0 && <p className="text-sm text-cream/60">אין פניות עדיין.</p>}
+              {data.leads.map((lead) => (
                 <article key={lead.id} className="rounded-2xl border border-white/10 bg-ink/50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-xs text-cream/60">{new Date(lead.createdAt).toLocaleString("he-IL")}</p>
                     <select
                       className="min-h-10 rounded-lg border border-white/15 bg-ink px-3 text-sm"
                       value={lead.status}
-                      onChange={(event) => {
-                        updateLeadStatus(lead.id, event.target.value);
-                        setNotice("סטטוס הפנייה עודכן");
-                      }}
+                      onChange={(event) => updateLeadStatus(lead.id, event.target.value)}
                     >
                       <option value="חדש">חדש</option>
                       <option value="טופל">טופל</option>

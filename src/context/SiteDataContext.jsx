@@ -36,11 +36,14 @@ export function SiteDataProvider({ children }) {
           ...current,
           leads: [createLead({ source, payload }), ...current.leads].slice(0, 200),
         })),
-      updateLeadStatus: (id, status) =>
+      updateLeadStatus: (id, status) => {
         setData((current) => ({
           ...current,
           leads: current.leads.map((lead) => (lead.id === id ? { ...lead, status } : lead)),
-        })),
+        }));
+        setNotice("סטטוס הפנייה עודכן");
+        window.setTimeout(() => setNotice(""), 2600);
+      },
       saveAll: (nextData) => {
         setData(nextData);
         setNotice("השינויים נשמרו בהצלחה");
