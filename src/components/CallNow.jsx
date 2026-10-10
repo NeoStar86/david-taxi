@@ -1,3 +1,4 @@
+import { useLanguage } from "../context/LanguageContext";
 import { useSiteData } from "../context/SiteDataContext";
 import { PhoneIcon } from "./Icons";
 
@@ -8,6 +9,7 @@ const sizes = {
 
 export default function CallNow({ size = "md", className = "" }) {
   const { data, recordClick } = useSiteData();
+  const { t } = useLanguage();
   const { site } = data;
 
   return (
@@ -17,13 +19,14 @@ export default function CallNow({ size = "md", className = "" }) {
       className={`btn-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${sizes[size]} ${className}`}
     >
       <PhoneIcon />
-      חייג עכשיו
+      {t("nav.call")}
     </a>
   );
 }
 
 export function WhatsAppButton({ size = "lg", className = "" }) {
   const { data, recordClick } = useSiteData();
+  const { t } = useLanguage();
   const { site } = data;
 
   return (
@@ -40,7 +43,7 @@ export function WhatsAppButton({ size = "lg", className = "" }) {
           />
         </svg>
       </span>
-      הזמן ב-WhatsApp
+      {t("nav.whatsapp")}
     </a>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSiteData } from "../context/SiteDataContext";
 import CallNow from "./CallNow";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { LogoMark } from "./Icons";
 
 export default function Navbar() {
@@ -39,7 +40,10 @@ export default function Navbar() {
           </span>
         </a>
 
-        <div className="ms-auto flex items-center gap-2 lg:gap-8">
+        <div className="ms-auto flex max-w-[62%] items-center gap-1.5 overflow-x-auto sm:max-w-none sm:gap-2 lg:gap-4">
+          <div className="hidden shrink-0 sm:block">
+            <LanguageSwitcher />
+          </div>
           <nav className="hidden items-center gap-6 xl:gap-7 lg:flex" aria-label="ניווט ראשי">
             {navLinks.map((link) => (
               <a
@@ -81,6 +85,9 @@ export default function Navbar() {
           className="border-t border-white/10 bg-ink px-4 py-3 lg:hidden"
           aria-label="ניווט לנייד"
         >
+          <div className="mb-3 sm:hidden">
+            <LanguageSwitcher />
+          </div>
           <ul className="flex flex-col">
             {navLinks.map((link) => (
               <li key={link.href}>

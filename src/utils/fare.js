@@ -7,7 +7,7 @@ function routeKey(origin, destination) {
 }
 
 function applySurge(result, surge) {
-  if (result.error || !surge?.enabled) {
+  if (result.errorKey || !surge?.enabled) {
     return result;
   }
   const percent = Number(surge.percent) || 0;
@@ -24,16 +24,32 @@ function applySurge(result, surge) {
   };
 }
 
-export function estimateFareFromRoutes(routes, origin, destination, surge) {
+function applyVehicleMultiplier(result, multiplier) {
+  if (result.errorKey) {
+    return result;
+  }
+  const factor = Number(multiplier) || 1;
+  if (factor <= 0 || factor === 1) {
+    return result;
+  }
+  return {
+    ...result,
+    min: Math.round(result.min * factor),
+    max: Math.round(result.max * factor),
+    vehicleMultiplier: factor,
+  };
+}
+
+export function estimateFareFromRoutes(routes, origin, destination, surge, vehicleMultiplier = 1) {
   const from = normalize(origin);
   const to = normalize(destination);
 
   if (!from || !to) {
-    return { error: "נא לבחור עיר מוצא ויעד." };
+    return { errorKey: "calc.errors.pickRoute" };
   }
 
   if (from === to) {
-    return { error: "עיר המוצא והיעד זהות — בחרו יעד שונה." };
+    return { errorKey: "calc.errors.sameCity" };
   }
 
   const direct = routes.find(
@@ -44,40 +60,37 @@ export function estimateFareFromRoutes(routes, origin, destination, surge) {
   );
   const match = direct ?? reverse;
 
+  let baseResult;
   if (match) {
-    return applySurge(
-      {
-        origin: from,
-        destination: to,
-        min: Number(match.min),
-        max: Number(match.max),
-        minutes: Number(match.minutes),
-      },
-      surge,
-    );
-  }
-
-  const fallbackMinutes = Math.min(120, 25 + Math.max(from.length, to.length) * 3);
-  const base = 80 + fallbackMinutes * 2;
-  return applySurge(
-    {
+    baseResult = {
+      origin: from,
+      destination: to,
+      min: Number(match.min),
+      max: Number(match.max),
+      minutes: Number(match.minutes),
+    };
+  } else {
+    const fallbackMinutes = Math.min(120, 25 + Math.max(from.length, to.length) * 3);
+    const base = 80 + fallbackMinutes * 2;
+    baseResult = {
       origin: from,
       destination: to,
       min: base,
       max: base + 35,
       minutes: fallbackMinutes,
       approximate: true,
-    },
-    surge,
-  );
+    };
+  }
+
+  return applyVehicleMultiplier(applySurge(baseResult, surge), vehicleMultiplier);
 }
 
-export function formatEstimate(result) {
-  if (result.error) {
-    return { price: "—", time: "—" };
+export function formatEstimate(result, t) {
+  if (result.errorKey) {
+    return { price: "—", time: "—", errorKey: result.errorKey };
   }
   return {
     price: `${result.min}-${result.max} ₪`,
-    time: `כ-${result.minutes} דקות`,
+    time: t ? t("calc.minutes", { n: result.minutes }) : `~${result.minutes} min`,
   };
 }

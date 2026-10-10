@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSiteData } from "../context/SiteDataContext";
+import { LOCALE_META, SUPPORTED_LANGS } from "../i18n/translations";
 import { changeAdminPassword, logoutAdmin } from "./auth";
 import AdminImageField from "./AdminImageField";
 
@@ -42,6 +43,30 @@ export default function AdminDashboard({ onLogout }) {
     if (shouldPersist) {
       saveAll(nextDraft);
     }
+  }
+
+  function updateVehicleField(vehicleId, patch, { persist: shouldPersist = false } = {}) {
+    const nextDraft = {
+      ...draft,
+      vehicles: (draft.vehicles ?? []).map((vehicle) =>
+        vehicle.id === vehicleId ? { ...vehicle, ...patch } : vehicle,
+      ),
+    };
+    setDraft(nextDraft);
+    if (shouldPersist) {
+      saveAll(nextDraft);
+    }
+  }
+
+  function updateVehicleName(vehicleId, lang, value) {
+    setDraft((current) => ({
+      ...current,
+      vehicles: (current.vehicles ?? []).map((vehicle) =>
+        vehicle.id === vehicleId
+          ? { ...vehicle, names: { ...vehicle.names, [lang]: value } }
+          : vehicle,
+      ),
+    }));
   }
 
   function handleLogout() {
@@ -258,6 +283,63 @@ export default function AdminDashboard({ onLogout }) {
                     }
                   />
                 </label>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-extrabold">סוגי רכב ומכפילי מחיר</h3>
+                {(draft.vehicles ?? []).map((vehicle) => (
+                  <article key={vehicle.id} className="rounded-2xl border border-white/10 bg-ink/40 p-4">
+                    <p className="text-sm font-extrabold text-gold">{vehicle.id}</p>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      {SUPPORTED_LANGS.map((lang) => (
+                        <label key={lang} className="block">
+                          <span className="text-xs font-bold text-cream/60">
+                            שם רכב ({LOCALE_META[lang].label})
+                          </span>
+                          <input
+                            className={inputClass}
+                            value={vehicle.names?.[lang] ?? ""}
+                            onChange={(event) => updateVehicleName(vehicle.id, lang, event.target.value)}
+                          />
+                        </label>
+                      ))}
+                      <label className="block">
+                        <span className="text-xs font-bold text-cream/60">קיבולת נוסעים</span>
+                        <input
+                          type="number"
+                          min={1}
+                          className={inputClass}
+                          value={vehicle.capacity}
+                          onChange={(event) =>
+                            updateVehicleField(vehicle.id, { capacity: Number(event.target.value) })
+                          }
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-xs font-bold text-cream/60">מכפיל מחיר (1 = בסיס)</span>
+                        <input
+                          type="number"
+                          min={0.5}
+                          step={0.05}
+                          className={inputClass}
+                          value={vehicle.multiplier}
+                          onChange={(event) =>
+                            updateVehicleField(vehicle.id, { multiplier: Number(event.target.value) })
+                          }
+                        />
+                      </label>
+                    </div>
+                    <div className="mt-4">
+                      <AdminImageField
+                        label="תמונת רכב לדף הבית"
+                        value={vehicle.image ?? ""}
+                        onUpdate={(value, options) =>
+                          updateVehicleField(vehicle.id, { image: value }, options)
+                        }
+                      />
+                    </div>
+                  </article>
+                ))}
               </div>
 
               <div className="overflow-x-auto">

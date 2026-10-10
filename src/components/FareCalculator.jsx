@@ -1,6 +1,9 @@
-import { Calculator, Clock3, Route } from "lucide-react";
+import { ArrowRight, Calculator, Clock3, Route } from "lucide-react";
 import { useMemo, useState } from "react";
+import { getVehicleLabel } from "../data/defaultVehicles";
+import { useLanguage } from "../context/LanguageContext";
 import { useSiteData } from "../context/SiteDataContext";
+import { useVehicleFlow } from "../context/VehicleFlowContext";
 import { estimateFareFromRoutes, formatEstimate } from "../utils/fare";
 import { buildFareWhatsAppMessage, openWhatsApp } from "../utils/whatsappLinks";
 
@@ -9,18 +12,34 @@ const fieldClass =
 
 export default function FareCalculator() {
   const { data, addLead } = useSiteData();
-  const { fare } = data;
+  const { fare, vehicles } = data;
+  const { lang, t, dir } = useLanguage();
+  const { selectedVehicleId, clearVehicle } = useVehicleFlow();
   const [origin, setOrigin] = useState(fare.originSuggestions[0] ?? "תל אביב");
   const [destination, setDestination] = useState(fare.destinationSuggestions[0] ?? 'נתב"ג');
 
-  const estimate = useMemo(
-    () => estimateFareFromRoutes(fare.routes, origin, destination, fare.surge),
-    [fare.routes, fare.surge, origin, destination],
+  const selectedVehicle = useMemo(
+    () => vehicles.find((vehicle) => vehicle.id === selectedVehicleId) ?? null,
+    [vehicles, selectedVehicleId],
   );
-  const formatted = useMemo(() => formatEstimate(estimate), [estimate]);
+
+  const estimate = useMemo(
+    () =>
+      estimateFareFromRoutes(
+        fare.routes,
+        origin,
+        destination,
+        fare.surge,
+        selectedVehicle?.multiplier ?? 1,
+      ),
+    [fare.routes, fare.surge, origin, destination, selectedVehicle],
+  );
+
+  const formatted = useMemo(() => formatEstimate(estimate, t), [estimate, t]);
+  const vehicleLabel = selectedVehicle ? getVehicleLabel(selectedVehicle, lang) : "";
 
   function handleWhatsAppOrder() {
-    if (estimate.error) return;
+    if (estimate.errorKey || !selectedVehicle) return;
     addLead({
       source: "מחשבון מחיר",
       payload: {
@@ -29,10 +48,26 @@ export default function FareCalculator() {
         min: estimate.min,
         max: estimate.max,
         minutes: estimate.minutes,
+        vehicleId: selectedVehicle.id,
+        vehicleLabel,
       },
     });
-    openWhatsApp(buildFareWhatsAppMessage(estimate));
+    openWhatsApp(
+      buildFareWhatsAppMessage(
+        {
+          origin: estimate.origin,
+          destination: estimate.destination,
+          min: estimate.min,
+          max: estimate.max,
+          minutes: estimate.minutes,
+          vehicleLabel,
+        },
+        lang,
+      ),
+    );
   }
+
+  const showVehicleWarning = !selectedVehicle;
 
   return (
     <section id="calculator" className="relative overflow-hidden bg-ink py-16 sm:py-24">
@@ -40,25 +75,37 @@ export default function FareCalculator() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="max-w-2xl">
-          <p className="section-kicker">מחשבון אומדן מחיר מהיר</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">
-            כמה תעלה הנסיעה?
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-cream/70">
-            בוחרים מוצא ויעד, מקבלים טווח מחיר וזמן משוער — וממשיכים ישר ל-WhatsApp.
-          </p>
+          <p className="section-kicker">{t("calc.kicker")}</p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-cream sm:text-4xl">{t("calc.title")}</h2>
+          <p className="mt-4 text-lg leading-relaxed text-cream/70">{t("calc.subtitle")}</p>
         </div>
 
         <div className="glass-card mt-10 grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8">
           <div className="grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-bold text-cream/60">{t("calc.vehicle")}</p>
+                <p className="mt-1 text-base font-extrabold text-gold">
+                  {vehicleLabel || t("calc.errors.pickVehicle")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={clearVehicle}
+                className="btn-outline-gold inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm"
+              >
+                <ArrowRight className={`h-4 w-4 ${dir === "rtl" ? "" : "rotate-180"}`} aria-hidden="true" />
+                {t("calc.backToVehicles")}
+              </button>
+            </div>
+
             <label className="block sm:col-span-1">
-              <span className="text-sm font-bold text-cream">עיר מוצא</span>
+              <span className="text-sm font-bold text-cream">{t("calc.origin")}</span>
               <input
                 list="fare-origin-list"
                 value={origin}
                 onChange={(event) => setOrigin(event.target.value)}
                 className={fieldClass}
-                placeholder="לדוגמה: תל אביב"
               />
               <datalist id="fare-origin-list">
                 {fare.originSuggestions.map((city) => (
@@ -68,13 +115,12 @@ export default function FareCalculator() {
             </label>
 
             <label className="block sm:col-span-1">
-              <span className="text-sm font-bold text-cream">יעד</span>
+              <span className="text-sm font-bold text-cream">{t("calc.destination")}</span>
               <input
                 list="fare-destination-list"
                 value={destination}
                 onChange={(event) => setDestination(event.target.value)}
                 className={fieldClass}
-                placeholder='לדוגמה: נתב"ג'
               />
               <datalist id="fare-destination-list">
                 {fare.destinationSuggestions.map((city) => (
@@ -83,37 +129,37 @@ export default function FareCalculator() {
               </datalist>
             </label>
 
-            <p className="sm:col-span-2 text-xs leading-relaxed text-cream/55">
-              * האומדן לצורך התמצאות בלבד. המחיר הסופי ייקבע לפני תחילת הנסיעה.
-            </p>
+            <p className="sm:col-span-2 text-xs leading-relaxed text-cream/55">{t("calc.disclaimer")}</p>
           </div>
 
           <div className="flex flex-col justify-between gap-5">
             <div className="glass-card rounded-2xl border-gold/25 p-5">
-              {estimate.error ? (
-                <p className="text-sm font-semibold text-gold">{estimate.error}</p>
+              {estimate.errorKey ? (
+                <p className="text-sm font-semibold text-gold">{t(estimate.errorKey)}</p>
+              ) : showVehicleWarning ? (
+                <p className="text-sm font-semibold text-gold">{t("calc.errors.pickVehicle")}</p>
               ) : (
                 <>
                   <div className="flex items-start gap-3">
                     <Calculator className="mt-0.5 h-5 w-5 text-gold" aria-hidden="true" />
                     <div>
-                      <p className="text-xs font-bold text-cream/60">טווח מחיר משוער</p>
+                      <p className="text-xs font-bold text-cream/60">{t("calc.priceRange")}</p>
                       <p className="mt-1 text-3xl font-extrabold text-gold">{formatted.price}</p>
                     </div>
                   </div>
                   <div className="mt-4 flex items-center gap-3 border-t border-white/10 pt-4">
                     <Clock3 className="h-5 w-5 text-gold" aria-hidden="true" />
                     <div>
-                      <p className="text-xs font-bold text-cream/60">זמן נסיעה משוער</p>
+                      <p className="text-xs font-bold text-cream/60">{t("calc.eta")}</p>
                       <p className="mt-1 text-lg font-extrabold text-cream">{formatted.time}</p>
                     </div>
                   </div>
                   <div className="mt-4 flex items-center gap-2 text-xs text-cream/60">
-                    <Route className="h-4 w-4 text-gold" aria-hidden="true" />
+                    <Route className="h-4 w-4 shrink-0 text-gold" aria-hidden="true" />
                     <span>
-                      מ{estimate.origin} ל{estimate.destination}
-                      {estimate.approximate ? " · אומדן כללי" : ""}
-                      {estimate.surgeApplied ? ` · תוספת ${estimate.surgePercent}%` : ""}
+                      {t("calc.route", { origin: estimate.origin, destination: estimate.destination })}
+                      {estimate.approximate ? t("calc.approximate") : ""}
+                      {estimate.surgeApplied ? t("calc.surge", { n: estimate.surgePercent }) : ""}
                     </span>
                   </div>
                 </>
@@ -123,10 +169,10 @@ export default function FareCalculator() {
             <button
               type="button"
               onClick={handleWhatsAppOrder}
-              disabled={Boolean(estimate.error)}
+              disabled={Boolean(estimate.errorKey) || showVehicleWarning}
               className="btn-whatsapp min-h-12 w-full px-6 text-base disabled:cursor-not-allowed disabled:opacity-45"
             >
-              הזמן במחיר זה ב-WhatsApp
+              {t("calc.whatsappCta")}
             </button>
           </div>
         </div>

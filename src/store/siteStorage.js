@@ -1,3 +1,4 @@
+import { mergeVehicles } from "../data/defaultVehicles";
 import { createDefaultSiteState } from "./defaults";
 
 export const STORAGE_KEY = "david-taxi-site-data-v1";
@@ -18,6 +19,7 @@ export function loadSiteState() {
       media: { ...defaults.media, ...parsed.media },
       announcement: { ...defaults.announcement, ...parsed.announcement },
       analytics: { ...defaults.analytics, ...parsed.analytics },
+      vehicles: mergeVehicles(parsed.vehicles),
       fare: {
         ...defaults.fare,
         ...parsed.fare,

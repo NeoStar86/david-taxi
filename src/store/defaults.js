@@ -7,6 +7,7 @@ import {
   site,
   testimonials,
 } from "../content";
+import { defaultVehicles } from "../data/defaultVehicles";
 import { destinationSuggestions, originSuggestions } from "../data/fareEstimates";
 
 const seedRoutes = [
@@ -41,6 +42,10 @@ export function createDefaultSiteState() {
       callClicks: 0,
       whatsappClicks: 0,
     },
+    vehicles: defaultVehicles.map((vehicle) => ({
+      ...vehicle,
+      names: { ...vehicle.names },
+    })),
     fare: {
       originSuggestions: [...originSuggestions],
       destinationSuggestions: [...destinationSuggestions],

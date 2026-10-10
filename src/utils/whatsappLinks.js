@@ -1,3 +1,4 @@
+import { t as translate } from "../i18n/translations";
 import { loadSiteState } from "../store/siteStorage";
 
 function getSite() {
@@ -10,17 +11,24 @@ export function openWhatsApp(text) {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
-export function buildFareWhatsAppMessage({ origin, destination, min, max, minutes }) {
+export function buildFareWhatsAppMessage(
+  { origin, destination, min, max, minutes, vehicleLabel },
+  lang = "he",
+) {
+  const tr = (key, vars) => translate(lang, key, vars);
   return [
-    "היי דוד, אשמח להזמין נסיעה לפי האומדן:",
+    tr("wa.fareIntro"),
     "",
-    `*מוצא:* ${origin}`,
-    `*יעד:* ${destination}`,
-    `*אומדן מחיר:* ${min}-${max} ₪`,
-    `*זמן נסיעה משוער:* כ-${minutes} דקות`,
+    `*${tr("wa.origin")}:* ${origin}`,
+    `*${tr("wa.destination")}:* ${destination}`,
+    vehicleLabel ? `*${tr("wa.vehicle")}:* ${vehicleLabel}` : "",
+    `*${tr("wa.price")}:* ${min}-${max} ₪`,
+    `*${tr("wa.eta")}:* ${tr("calc.minutes", { n: minutes })}`,
     "",
-    "אשמח לאישור סופי ולהזמנה. תודה!",
-  ].join("\n");
+    tr("wa.closing"),
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export const locationShareMessage =
