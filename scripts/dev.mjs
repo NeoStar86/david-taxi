@@ -29,17 +29,28 @@ async function writeHtml() {
 }
 
 function resolveFile(urlPath) {
-  const clean = decodeURIComponent(urlPath.split("?")[0]);
-  const candidates = [
-    path.join(dist, clean === "/" ? "index.html" : clean),
-    path.join(root, "public", clean),
-  ];
-  const file = candidates.find((candidate) => existsSync(candidate) && statSync(candidate).isFile());
-  if (file) return file;
-  if (!path.extname(clean)) {
-    const spaIndex = path.join(dist, "index.html");
-    if (existsSync(spaIndex)) return spaIndex;
+  const clean = decodeURIComponent((urlPath || "/").split("?")[0]);
+  const relativePath = clean.replace(/^\/+/, "");
+
+  if (relativePath === "") {
+    const indexFile = path.join(dist, "index.html");
+    return existsSync(indexFile) ? indexFile : null;
   }
+
+  const assetCandidates = [
+    path.join(dist, relativePath),
+    path.join(root, "public", relativePath),
+  ];
+  const asset = assetCandidates.find(
+    (candidate) => existsSync(candidate) && statSync(candidate).isFile(),
+  );
+  if (asset) return asset;
+
+  const indexFile = path.join(dist, "index.html");
+  if (existsSync(indexFile) && !path.extname(relativePath)) {
+    return indexFile;
+  }
+
   return null;
 }
 

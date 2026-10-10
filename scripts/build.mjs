@@ -58,3 +58,6 @@ if (css.status !== 0) {
 }
 
 await cp(path.join(root, "public"), dist, { recursive: true, force: true });
+
+const builtIndex = await readFile(path.join(dist, "index.html"), "utf8");
+await writeFile(path.join(dist, "404.html"), builtIndex);
