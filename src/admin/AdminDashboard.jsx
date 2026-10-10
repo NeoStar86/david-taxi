@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSiteData } from "../context/SiteDataContext";
-import { logoutAdmin } from "./auth";
+import { changeAdminPassword, logoutAdmin } from "./auth";
 
 const tabs = [
   { id: "general", label: "פרטים כלליים וקשר" },
   { id: "fare", label: "מחשבון מחירים" },
   { id: "media", label: "ניהול מדיה ותמונות" },
   { id: "testimonials", label: "המלצות לקוחות" },
+  { id: "security", label: "אבטחת חשבון" },
 ];
 
 const inputClass =
@@ -17,6 +18,10 @@ export default function AdminDashboard({ onLogout }) {
   const { data, notice, saveAll } = useSiteData();
   const [activeTab, setActiveTab] = useState("general");
   const [draft, setDraft] = useState(data);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [securityFeedback, setSecurityFeedback] = useState({ type: "", text: "" });
 
   useEffect(() => {
     setDraft(data);
@@ -30,6 +35,22 @@ export default function AdminDashboard({ onLogout }) {
   function handleLogout() {
     logoutAdmin();
     onLogout?.();
+  }
+
+  function handleChangePassword(event) {
+    event.preventDefault();
+    setSecurityFeedback({ type: "", text: "" });
+
+    const result = changeAdminPassword(currentPassword, newPassword, confirmPassword);
+    if (!result.ok) {
+      setSecurityFeedback({ type: "error", text: result.error });
+      return;
+    }
+
+    setSecurityFeedback({ type: "success", text: result.message });
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   }
 
   return (
@@ -370,6 +391,66 @@ export default function AdminDashboard({ onLogout }) {
               <button type="button" className="btn-primary ms-2 min-h-12 px-6" onClick={() => persist(draft)}>
                 שמור שינויים
               </button>
+            </section>
+          )}
+
+          {activeTab === "security" && (
+            <section className="space-y-4">
+              <h2 className="text-xl font-extrabold">אבטחת חשבון</h2>
+              <p className="text-sm text-cream/70">
+                הסיסמה נשמרת במכשיר זה בלבד (localStorage). ברירת המחדל הראשונית היא 1234.
+              </p>
+
+              <form onSubmit={handleChangePassword} className="max-w-md space-y-4">
+                <label className="block">
+                  <span className="text-sm font-bold">סיסמה נוכחית</span>
+                  <input
+                    type="password"
+                    className={inputClass}
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    autoComplete="current-password"
+                    required
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-bold">סיסמה חדשה</span>
+                  <input
+                    type="password"
+                    className={inputClass}
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    autoComplete="new-password"
+                    required
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-bold">אימות סיסמה חדשה</span>
+                  <input
+                    type="password"
+                    className={inputClass}
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    autoComplete="new-password"
+                    required
+                  />
+                </label>
+
+                {securityFeedback.text && (
+                  <p
+                    className={`text-sm font-semibold ${
+                      securityFeedback.type === "success" ? "text-emerald-300" : "text-gold"
+                    }`}
+                    role="alert"
+                  >
+                    {securityFeedback.text}
+                  </p>
+                )}
+
+                <button type="submit" className="btn-primary min-h-12 px-6">
+                  שנה סיסמה
+                </button>
+              </form>
             </section>
           )}
         </div>

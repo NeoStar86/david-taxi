@@ -15,15 +15,9 @@ export default function AdminLogin({ onSuccess }) {
         onSuccess();
         return;
       }
-      if (result.reason === "missing") {
-        setError(
-          "סיסמת מנהל לא הוגדרה בשרת. הוסיפו ADMIN_PASSWORD בהגדרות Vercel ובצעו redeploy.",
-        );
-        return;
-      }
-      setError("סיסמה שגויה, נסה שוב");
+      setError("סיסמה שגויה. נסה שוב.");
     } catch {
-      setError("סיסמה שגויה, נסה שוב");
+      setError("סיסמה שגויה. נסה שוב.");
     }
   }
 

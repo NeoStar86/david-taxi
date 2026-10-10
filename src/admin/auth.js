@@ -1,63 +1,64 @@
-const AUTH_KEY = "david_admin_auth";
+const AUTH_KEY = "admin_logged_in";
+const PASSWORD_KEY = "admin_password";
 const DEFAULT_PASSWORD = "1234";
 
-function nonEmptyString(value) {
-  return typeof value === "string" && value.length > 0 ? value : null;
-}
-
-export function getAdminPassword() {
+export function getStoredAdminPassword() {
   try {
-    if (typeof process !== "undefined" && process.env && process.env.ADMIN_PASSWORD) {
-      const fromProcess = nonEmptyString(process.env.ADMIN_PASSWORD);
-      if (fromProcess) {
-        return fromProcess;
-      }
+    const stored = localStorage.getItem(PASSWORD_KEY);
+    if (typeof stored !== "string" || stored.length === 0) {
+      localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
+      return DEFAULT_PASSWORD;
     }
-    if (typeof import.meta !== "undefined" && import.meta.env) {
-      return (
-        nonEmptyString(import.meta.env.ADMIN_PASSWORD) ||
-        nonEmptyString(import.meta.env.VITE_ADMIN_PASSWORD) ||
-        nonEmptyString(import.meta.env.NEXT_PUBLIC_ADMIN_PASSWORD) ||
-        null
-      );
-    }
-  } catch (error) {
-    console.error("Error reading admin password env:", error);
+    return stored;
+  } catch {
+    return DEFAULT_PASSWORD;
   }
-  return null;
 }
 
-function resolveExpectedPassword() {
-  const configured = getAdminPassword();
-  if (configured) {
-    return configured;
-  }
-  const isDev =
-    typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV === true;
-  return isDev ? DEFAULT_PASSWORD : null;
-}
-
-/** @returns {{ ok: true } | { ok: false, reason: "wrong" | "missing" }} */
+/** @returns {{ ok: true } | { ok: false }} */
 export function loginAdmin(password) {
   try {
-    const expected = resolveExpectedPassword();
-    if (!expected) {
-      return { ok: false, reason: "missing" };
-    }
-    if (password !== expected) {
-      return { ok: false, reason: "wrong" };
+    const expected = getStoredAdminPassword();
+    const entered = String(password ?? "").trim();
+    if (entered !== expected) {
+      return { ok: false };
     }
     localStorage.setItem(AUTH_KEY, "true");
     return { ok: true };
-  } catch (error) {
-    console.error("Error reading admin password env:", error);
-    return { ok: false, reason: "missing" };
+  } catch {
+    return { ok: false };
+  }
+}
+
+/** @returns {{ ok: true, message: string } | { ok: false, error: string }} */
+export function changeAdminPassword(currentPassword, newPassword, confirmPassword) {
+  try {
+    const stored = getStoredAdminPassword();
+    const current = String(currentPassword ?? "").trim();
+    const next = String(newPassword ?? "").trim();
+    const confirm = String(confirmPassword ?? "").trim();
+
+    if (current !== stored) {
+      return { ok: false, error: "הסיסמה הנוכחית שגויה" };
+    }
+    if (next !== confirm) {
+      return { ok: false, error: "הסיסמאות אינן תואמות" };
+    }
+    if (next.length === 0) {
+      return { ok: false, error: "יש להזין סיסמה חדשה" };
+    }
+
+    localStorage.setItem(PASSWORD_KEY, next);
+    return { ok: true, message: "הסיסמה שונתה בהצלחה!" };
+  } catch {
+    return { ok: false, error: "לא ניתן לעדכן את הסיסמה כרגע" };
   }
 }
 
 export function logoutAdmin() {
   try {
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem("david_admin_auth");
     localStorage.removeItem("david-taxi-admin-authenticated");
   } catch {
     // ignore storage errors
@@ -69,10 +70,12 @@ export function isAdminAuthenticated() {
     if (localStorage.getItem(AUTH_KEY) === "true") {
       return true;
     }
-    if (localStorage.getItem("david-taxi-admin-authenticated") === "true") {
-      localStorage.setItem(AUTH_KEY, "true");
-      localStorage.removeItem("david-taxi-admin-authenticated");
-      return true;
+    for (const legacyKey of ["david_admin_auth", "david-taxi-admin-authenticated"]) {
+      if (localStorage.getItem(legacyKey) === "true") {
+        localStorage.setItem(AUTH_KEY, "true");
+        localStorage.removeItem(legacyKey);
+        return true;
+      }
     }
     return false;
   } catch {
