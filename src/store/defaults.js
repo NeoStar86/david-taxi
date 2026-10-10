@@ -68,6 +68,7 @@ export function createDefaultSiteState() {
       visible: true,
     })),
     leads: [],
+    rides: [],
     static: {
       navLinks,
       services,

@@ -6,10 +6,12 @@ import { changeAdminPassword, logoutAdmin } from "./auth";
 import AdminAppearancePanel from "./AdminAppearancePanel";
 import AdminCmsHeroPanel from "./AdminCmsHeroPanel";
 import AdminImageField from "./AdminImageField";
+import AdminRideLogPanel from "./AdminRideLogPanel";
 import AdminVehiclesPanel from "./AdminVehiclesPanel";
 
 const tabs = [
   { id: "general", label: "פרטים כלליים וקשר" },
+  { id: "rides", label: "יומן נסיעות" },
   { id: "appearance", label: "עיצוב ונראות" },
   { id: "vehicles", label: "ניהול רכבים" },
   { id: "fare", label: "מחשבון מחירים" },
@@ -221,6 +223,10 @@ export default function AdminDashboard({ onLogout }) {
                 שמור שינויים
               </button>
             </section>
+          )}
+
+          {activeTab === "rides" && (
+            <AdminRideLogPanel draft={draft} setDraft={setDraft} persist={persist} />
           )}
 
           {activeTab === "appearance" && (

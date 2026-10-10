@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { rideFromWebsiteLead } from "../store/rides";
 import { createLead, loadSiteState, saveSiteState, STORAGE_KEY } from "../store/siteStorage";
 
 const SiteDataContext = createContext(null);
@@ -30,10 +31,15 @@ export function SiteDataProvider({ children }) {
       setFare: (fare) => setData((current) => ({ ...current, fare: { ...current.fare, ...fare } })),
       setTestimonials: (testimonials) => setData((current) => ({ ...current, testimonials })),
       addLead: ({ source, payload }) =>
-        setData((current) => ({
-          ...current,
-          leads: [createLead({ source, payload }), ...current.leads].slice(0, 200),
-        })),
+        setData((current) => {
+          const lead = createLead({ source, payload });
+          const ride = rideFromWebsiteLead(lead);
+          return {
+            ...current,
+            leads: [lead, ...current.leads].slice(0, 200),
+            rides: [ride, ...(current.rides ?? [])].slice(0, 500),
+          };
+        }),
       updateLeadStatus: (id, status) => {
         setData((current) => ({
           ...current,

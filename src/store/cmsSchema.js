@@ -13,4 +13,5 @@ export const CMS_TOP_LEVEL_KEYS = [
   "fare",
   "testimonials",
   "leads",
+  "rides",
 ];

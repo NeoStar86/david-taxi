@@ -43,6 +43,7 @@ export function loadSiteState() {
       },
       testimonials: parsed.testimonials?.length ? parsed.testimonials : defaults.testimonials,
       leads: parsed.leads ?? [],
+      rides: parsed.rides ?? [],
       static: defaults.static,
     };
   } catch {
