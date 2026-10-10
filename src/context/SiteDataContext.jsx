@@ -33,7 +33,7 @@ export function SiteDataProvider({ children }) {
       addLead: ({ source, payload }) =>
         setData((current) => {
           const lead = createLead({ source, payload });
-          const ride = rideFromWebsiteLead(lead);
+          const ride = rideFromWebsiteLead(lead, current.rides ?? []);
           return {
             ...current,
             leads: [lead, ...current.leads].slice(0, 200),

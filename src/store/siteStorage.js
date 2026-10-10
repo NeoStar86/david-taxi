@@ -1,4 +1,5 @@
 import { mergeVehicles } from "../data/defaultVehicles";
+import { normalizeRides } from "./rides";
 import { SUPPORTED_LANGS } from "../i18n/translations";
 import { createDefaultSiteState } from "./defaults";
 
@@ -43,7 +44,7 @@ export function loadSiteState() {
       },
       testimonials: parsed.testimonials?.length ? parsed.testimonials : defaults.testimonials,
       leads: parsed.leads ?? [],
-      rides: parsed.rides ?? [],
+      rides: normalizeRides(parsed.rides ?? []),
       static: defaults.static,
     };
   } catch {
