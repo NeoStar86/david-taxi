@@ -1,4 +1,5 @@
-import { THEME_PRESETS } from "../store/defaultTheme";
+import { THEME_PRESETS, createDefaultTheme } from "../store/defaultTheme";
+import { applyTheme } from "../utils/applyTheme";
 
 const inputClass =
   "mt-2 w-full min-h-12 rounded-xl border border-white/15 bg-ink/80 px-4 py-3 text-base outline-none focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
@@ -15,6 +16,19 @@ export default function AdminAppearancePanel({ draft, setDraft, persist }) {
       ...current,
       theme: { ...current.theme, ...patch },
     }));
+  }
+
+  function resetThemeToDefault() {
+    const confirmed = window.confirm(
+      "לאפס את כל הגדרות העיצוב לברירת המחדל (מצב כהה, זהב ושחור)? השינוי יישמר מיד באתר.",
+    );
+    if (!confirmed) return;
+
+    const defaultTheme = createDefaultTheme();
+    applyTheme(defaultTheme);
+    const nextDraft = { ...draft, theme: { ...defaultTheme } };
+    setDraft(nextDraft);
+    persist(nextDraft);
   }
 
   return (
@@ -126,9 +140,17 @@ export default function AdminAppearancePanel({ draft, setDraft, persist }) {
         </div>
       </div>
 
-      <button type="button" className="btn-primary min-h-12 px-6" onClick={() => persist(draft)}>
-        שמור עיצוב
-      </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <button type="button" className="btn-primary min-h-12 px-6" onClick={() => persist(draft)}>
+          שמור עיצוב
+        </button>
+        <button type="button" className="btn-outline-gold min-h-12 px-6" onClick={resetThemeToDefault}>
+          איפוס לברירת מחדל
+        </button>
+      </div>
+      <p className="text-xs text-cream/50">
+        איפוס מחזיר את ערכת ברירת המחדל (Dark Luxury — זהב ושחור) ומעדכן את localStorage מיד.
+      </p>
     </section>
   );
 }
