@@ -1,4 +1,4 @@
-/** Central branding & agency contact — edit here to update site-wide credits. */
+/** Central branding & agency contact — edit here only (not exposed in Admin UI). */
 export const agencyConfig = {
   agencyName: "BL Media Group",
   tagline: 'פותח ונוצר ע"י BL Media Group • פתרונות דיגיטל ופיתוח AI',

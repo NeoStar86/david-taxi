@@ -9,6 +9,7 @@ import {
 } from "../content";
 import { defaultVehicles } from "../data/defaultVehicles";
 import { destinationSuggestions, originSuggestions } from "../data/fareEstimates";
+import { DEFAULT_FARE_WHATSAPP_TEMPLATE } from "../constants/fareWhatsAppTemplate";
 import { createDefaultCms } from "./defaultCms";
 import { createDefaultTheme } from "./defaultTheme";
 
@@ -38,7 +39,7 @@ export function createDefaultSiteState() {
     },
     announcement: {
       enabled: false,
-      message: "הנחה מיוחדת להזמנות הלילה!",
+      message: 'הזמנת מוניות לנתב"ג 24/7 • התחייבות להגעה בזמן',
     },
     analytics: {
       callClicks: 0,
@@ -59,6 +60,7 @@ export function createDefaultSiteState() {
         enabled: false,
         percent: 20,
       },
+      whatsappTemplate: DEFAULT_FARE_WHATSAPP_TEMPLATE,
     },
     testimonials: testimonials.map((item, index) => ({
       id: `t${index + 1}`,

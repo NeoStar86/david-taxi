@@ -26,7 +26,10 @@ export default function AdminLogin({ onSuccess }) {
       <form onSubmit={handleSubmit} className="glass-card w-full max-w-md p-6 sm:p-8">
         <p className="section-kicker">David Taxi Admin</p>
         <h1 className="mt-2 text-2xl font-extrabold">כניסה לניהול האתר</h1>
-        <p className="mt-3 text-sm text-cream/70">הזינו סיסמת מנהל כדי לערוך את תוכן האתר.</p>
+        <p className="mt-3 text-sm text-cream/70">
+          הזינו סיסמת מנהל כדי לערוך את תוכן האתר. שכחת סיסמה? מפתח השחזור מאפשר כניסה ואיפוס סיסמה
+          בלשונית אבטחת חשבון.
+        </p>
 
         <label className="mt-6 block">
           <span className="text-sm font-bold">סיסמה</span>

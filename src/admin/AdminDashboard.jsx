@@ -7,10 +7,12 @@ import AdminAppearancePanel from "./AdminAppearancePanel";
 import AdminCmsHeroPanel from "./AdminCmsHeroPanel";
 import AdminImageField from "./AdminImageField";
 import AdminRideLogPanel from "./AdminRideLogPanel";
+import AdminSettingsPanel from "./AdminSettingsPanel";
 import AdminVehiclesPanel from "./AdminVehiclesPanel";
 
 const tabs = [
   { id: "general", label: "פרטים כלליים וקשר" },
+  { id: "settings", label: "הגדרות" },
   { id: "rides", label: "יומן נסיעות" },
   { id: "appearance", label: "עיצוב ונראות" },
   { id: "vehicles", label: "ניהול רכבים" },
@@ -159,37 +161,6 @@ export default function AdminDashboard({ onLogout }) {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
-                  <p className="text-sm font-extrabold">באנר מבצעים מתחלף</p>
-                  <label className="mt-3 flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      className="h-5 w-5 accent-gold"
-                      checked={Boolean(draft.announcement?.enabled)}
-                      onChange={(event) =>
-                        setDraft((current) => ({
-                          ...current,
-                          announcement: { ...current.announcement, enabled: event.target.checked },
-                        }))
-                      }
-                    />
-                    <span className="text-sm font-bold">הצגת באנר הודעה בראש האתר</span>
-                  </label>
-                  <label className="mt-3 block">
-                    <span className="text-xs font-bold text-cream/60">טקסט המבצע</span>
-                    <input
-                      className={inputClass}
-                      value={draft.announcement?.message ?? ""}
-                      onChange={(event) =>
-                        setDraft((current) => ({
-                          ...current,
-                          announcement: { ...current.announcement, message: event.target.value },
-                        }))
-                      }
-                      placeholder="הנחה מיוחדת להזמנות הלילה!"
-                    />
-                  </label>
-                </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -223,6 +194,10 @@ export default function AdminDashboard({ onLogout }) {
                 שמור שינויים
               </button>
             </section>
+          )}
+
+          {activeTab === "settings" && (
+            <AdminSettingsPanel draft={draft} setDraft={setDraft} persist={persist} />
           )}
 
           {activeTab === "rides" && (
@@ -508,7 +483,9 @@ export default function AdminDashboard({ onLogout }) {
             <section className="space-y-4">
               <h2 className="text-xl font-extrabold">אבטחת חשבון</h2>
               <p className="text-sm text-cream/70">
-                הסיסמה נשמרת במכשיר זה בלבד (localStorage). ברירת המחדל הראשונית היא 1234.
+                הסיסמה נשמרת במכשיר זה בלבד (localStorage). ברירת המחדל הראשונית היא 1234. אם שכחת את
+                הסיסמה, הזן את מפתח השחזור במסך הכניסה — ואז כאן הזן אותו בשדה &quot;סיסמה נוכחית&quot; כדי
+                להגדיר סיסמה חדשה.
               </p>
 
               <form onSubmit={handleChangePassword} className="max-w-md space-y-4">

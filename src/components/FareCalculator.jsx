@@ -63,6 +63,7 @@ export default function FareCalculator() {
           vehicleLabel,
         },
         lang,
+        fare.whatsappTemplate,
       ),
     );
   }

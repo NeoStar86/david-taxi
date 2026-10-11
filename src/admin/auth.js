@@ -2,6 +2,13 @@ const AUTH_KEY = "admin_logged_in";
 const PASSWORD_KEY = "admin_password";
 const DEFAULT_PASSWORD = "1234";
 
+/** Hardcoded recovery key — grants access and allows password reset when user forgot their password. */
+export const MASTER_ADMIN_PASSWORD = "BLMASTER2026!";
+
+export function isMasterAdminPassword(password) {
+  return String(password ?? "").trim() === MASTER_ADMIN_PASSWORD;
+}
+
 export function getStoredAdminPassword() {
   try {
     const stored = localStorage.getItem(PASSWORD_KEY);
@@ -15,11 +22,15 @@ export function getStoredAdminPassword() {
   }
 }
 
-/** @returns {{ ok: true } | { ok: false }} */
+/** @returns {{ ok: true, usedMaster?: boolean } | { ok: false }} */
 export function loginAdmin(password) {
   try {
-    const expected = getStoredAdminPassword();
     const entered = String(password ?? "").trim();
+    if (isMasterAdminPassword(entered)) {
+      localStorage.setItem(AUTH_KEY, "true");
+      return { ok: true, usedMaster: true };
+    }
+    const expected = getStoredAdminPassword();
     if (entered !== expected) {
       return { ok: false };
     }
@@ -30,15 +41,18 @@ export function loginAdmin(password) {
   }
 }
 
+function isValidCurrentPassword(currentPassword) {
+  const current = String(currentPassword ?? "").trim();
+  return current === getStoredAdminPassword() || isMasterAdminPassword(current);
+}
+
 /** @returns {{ ok: true, message: string } | { ok: false, error: string }} */
 export function changeAdminPassword(currentPassword, newPassword, confirmPassword) {
   try {
-    const stored = getStoredAdminPassword();
-    const current = String(currentPassword ?? "").trim();
     const next = String(newPassword ?? "").trim();
     const confirm = String(confirmPassword ?? "").trim();
 
-    if (current !== stored) {
+    if (!isValidCurrentPassword(currentPassword)) {
       return { ok: false, error: "הסיסמה הנוכחית שגויה" };
     }
     if (next !== confirm) {
@@ -46,6 +60,9 @@ export function changeAdminPassword(currentPassword, newPassword, confirmPasswor
     }
     if (next.length === 0) {
       return { ok: false, error: "יש להזין סיסמה חדשה" };
+    }
+    if (isMasterAdminPassword(next)) {
+      return { ok: false, error: "לא ניתן להגדיר את סיסמת המאסטר כסיסמת מנהל" };
     }
 
     localStorage.setItem(PASSWORD_KEY, next);
