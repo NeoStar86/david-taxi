@@ -25,6 +25,42 @@ const tabs = [
 const inputClass =
   "mt-2 w-full min-h-12 rounded-xl border border-white/15 bg-ink/80 px-4 py-3 text-base outline-none focus:border-gold/60 focus:ring-2 focus:ring-gold/20";
 
+function AdminTabNav({ activeTab, onChange }) {
+  return (
+    <nav className="space-y-3" aria-label="ניווט לוח בקרה">
+      <label className="block md:hidden">
+        <span className="text-xs font-bold text-cream/60">מעבר בין אזורים</span>
+        <select
+          className={`${inputClass} mt-1 min-h-12 text-base font-bold`}
+          value={activeTab}
+          onChange={(event) => onChange(event.target.value)}
+        >
+          {tabs.map((tab) => (
+            <option key={tab.id} value={tab.id}>
+              {tab.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div className="hidden flex-wrap gap-2 md:flex">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => onChange(tab.id)}
+            className={`min-h-11 rounded-full px-4 py-2 text-sm font-bold transition ${
+              activeTab === tab.id ? "bg-gold text-ink" : "border border-white/15 bg-white/5 hover:border-gold/35"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export default function AdminDashboard({ onLogout }) {
   const { t } = useLanguage();
   const { data, notice, saveAll } = useSiteData();
@@ -101,18 +137,22 @@ export default function AdminDashboard({ onLogout }) {
   }
 
   return (
-    <div className="min-h-screen bg-ink text-cream" dir="rtl">
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
-          <div>
-            <p className="text-sm font-extrabold">{t("admin.title")}</p>
+    <div className="admin-shell min-h-screen bg-ink pb-safe text-cream" dir="rtl">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-ink/90 pt-safe backdrop-blur-xl">
+        <div className="admin-container flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:py-4">
+          <div className="min-w-0">
+            <p className="text-sm font-extrabold sm:text-base">{t("admin.title")}</p>
             <p className="text-xs text-cream/60">{t("admin.subtitle")}</p>
           </div>
-          <div className="ms-auto flex items-center gap-2">
-            <Link to="/" className="btn-secondary min-h-12 px-4 text-sm">
+          <div className="flex w-full flex-wrap gap-2 sm:ms-auto sm:w-auto">
+            <Link to="/" className="btn-secondary min-h-11 flex-1 px-4 text-sm sm:min-h-12 sm:flex-none">
               {t("admin.viewSite")}
             </Link>
-            <button type="button" onClick={handleLogout} className="btn-outline-gold min-h-12 px-4 text-sm">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="btn-outline-gold min-h-11 flex-1 px-4 text-sm sm:min-h-12 sm:flex-none"
+            >
               {t("admin.logout")}
             </button>
           </div>
@@ -125,28 +165,15 @@ export default function AdminDashboard({ onLogout }) {
         </div>
       )}
 
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`min-h-12 shrink-0 rounded-full px-4 text-sm font-bold transition ${
-                activeTab === tab.id ? "bg-gold text-ink" : "border border-white/15 bg-white/5"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      <div className="admin-container py-5 sm:py-7">
+        <AdminTabNav activeTab={activeTab} onChange={setActiveTab} />
 
-        <div className="glass-card mt-4 p-5 sm:p-7">
+        <div className="glass-card mt-4 w-full p-4 sm:p-6 lg:p-8">
           {activeTab === "general" && (
             <section className="space-y-6">
               <h2 className="text-xl font-extrabold">פרטים כלליים וקשר</h2>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-ink/40 p-4 sm:col-span-2">
                   <p className="text-sm font-extrabold">מונה פניות (לחיצות באתר)</p>
                   <div className="mt-3 grid grid-cols-2 gap-3">
@@ -163,7 +190,7 @@ export default function AdminDashboard({ onLogout }) {
 
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {[
                   ["phoneDisplay", "טלפון לחיוג"],
                   ["phoneTel", "טלפון (tel)"],
@@ -387,7 +414,7 @@ export default function AdminDashboard({ onLogout }) {
               <h2 className="text-xl font-extrabold">המלצות לקוחות</h2>
               {draft.testimonials.map((item) => (
                 <article key={item.id} className="rounded-2xl border border-white/10 bg-ink/40 p-4">
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <label className="block">
                       <span className="text-xs font-bold">שם</span>
                       <input

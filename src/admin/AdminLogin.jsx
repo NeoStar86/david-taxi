@@ -22,7 +22,7 @@ export default function AdminLogin({ onSuccess }) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-ink px-4 py-10 text-cream">
+    <div className="admin-shell flex min-h-screen items-center justify-center bg-ink px-4 py-10 pb-safe pt-safe text-cream">
       <form onSubmit={handleSubmit} className="glass-card w-full max-w-md p-6 sm:p-8">
         <p className="section-kicker">David Taxi Admin</p>
         <h1 className="mt-2 text-2xl font-extrabold">כניסה לניהול האתר</h1>
