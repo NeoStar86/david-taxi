@@ -16,6 +16,8 @@ export function getViteEnvDefine(root) {
     "import.meta.env.DEV": JSON.stringify(process.env.NODE_ENV !== "production"),
     "import.meta.env.PROD": JSON.stringify(process.env.NODE_ENV === "production"),
     "import.meta.env.MODE": JSON.stringify(process.env.NODE_ENV === "production" ? "production" : "development"),
+    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(process.env.VITE_SUPABASE_URL ?? ""),
+    "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(process.env.VITE_SUPABASE_ANON_KEY ?? ""),
     "process.env.ADMIN_PASSWORD": JSON.stringify(adminPassword),
     "import.meta.env.ADMIN_PASSWORD": JSON.stringify(adminPassword),
     "import.meta.env.VITE_ADMIN_PASSWORD": JSON.stringify(process.env.VITE_ADMIN_PASSWORD ?? ""),

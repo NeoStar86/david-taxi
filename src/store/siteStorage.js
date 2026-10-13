@@ -13,6 +13,37 @@ function mergeCmsHero(defaultsHero, storedHero) {
 
 export const STORAGE_KEY = "david-taxi-site-data-v1";
 
+export function mergeStoredSitePayload(defaults, parsed) {
+  if (!parsed || typeof parsed !== "object") return defaults;
+  const { availability: _legacyAvailability, rides: _rides, static: _static, ...stored } = parsed;
+
+  return {
+    ...defaults,
+    ...stored,
+    site: { ...defaults.site, ...parsed.site },
+    media: { ...defaults.media, ...parsed.media },
+    announcement: { ...defaults.announcement, ...parsed.announcement },
+    analytics: { ...defaults.analytics, ...parsed.analytics },
+    theme: { ...defaults.theme, ...parsed.theme },
+    cms: {
+      ...defaults.cms,
+      ...parsed.cms,
+      hero: mergeCmsHero(defaults.cms.hero, parsed.cms?.hero),
+    },
+    vehicles: mergeVehicles(parsed.vehicles),
+    fare: {
+      ...defaults.fare,
+      ...parsed.fare,
+      routes: parsed.fare?.routes?.length ? parsed.fare.routes : defaults.fare.routes,
+      surge: { ...defaults.fare.surge, ...parsed.fare?.surge },
+    },
+    testimonials: parsed.testimonials?.length ? parsed.testimonials : defaults.testimonials,
+    leads: parsed.leads ?? [],
+    rides: normalizeRides(parsed.rides ?? []),
+    static: defaults.static,
+  };
+}
+
 export function loadSiteState() {
   const defaults = createDefaultSiteState();
   if (typeof window === "undefined") return defaults;
@@ -21,32 +52,7 @@ export function loadSiteState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaults;
     const parsed = JSON.parse(raw);
-    const { availability: _legacyAvailability, ...stored } = parsed;
-    return {
-      ...defaults,
-      ...stored,
-      site: { ...defaults.site, ...parsed.site },
-      media: { ...defaults.media, ...parsed.media },
-      announcement: { ...defaults.announcement, ...parsed.announcement },
-      analytics: { ...defaults.analytics, ...parsed.analytics },
-      theme: { ...defaults.theme, ...parsed.theme },
-      cms: {
-        ...defaults.cms,
-        ...parsed.cms,
-        hero: mergeCmsHero(defaults.cms.hero, parsed.cms?.hero),
-      },
-      vehicles: mergeVehicles(parsed.vehicles),
-      fare: {
-        ...defaults.fare,
-        ...parsed.fare,
-        routes: parsed.fare?.routes?.length ? parsed.fare.routes : defaults.fare.routes,
-        surge: { ...defaults.fare.surge, ...parsed.fare?.surge },
-      },
-      testimonials: parsed.testimonials?.length ? parsed.testimonials : defaults.testimonials,
-      leads: parsed.leads ?? [],
-      rides: normalizeRides(parsed.rides ?? []),
-      static: defaults.static,
-    };
+    return mergeStoredSitePayload(defaults, parsed);
   } catch {
     return defaults;
   }

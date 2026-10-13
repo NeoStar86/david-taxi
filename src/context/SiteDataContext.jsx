@@ -1,20 +1,62 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { isSupabaseConfigured } from "../lib/supabase";
+import {
+  loadSiteData,
+  mergeRemoteRides,
+  mergeRemoteSettings,
+  persistSiteData,
+} from "../services/siteDataRepository";
+import { subscribeToRides } from "../services/supabaseRidesService";
+import { subscribeToSiteSettings } from "../services/supabaseSettingsService";
 import { rideFromWebsiteLead } from "../store/rides";
-import { createLead, loadSiteState, saveSiteState, STORAGE_KEY } from "../store/siteStorage";
+import { createLead, loadSiteState, STORAGE_KEY } from "../store/siteStorage";
 
 const SiteDataContext = createContext(null);
 
 export function SiteDataProvider({ children }) {
   const [data, setData] = useState(() => loadSiteState());
   const [notice, setNotice] = useState("");
+  const [storageMode, setStorageMode] = useState(() => (isSupabaseConfigured() ? "supabase" : "local"));
+  const [cloudReady, setCloudReady] = useState(() => !isSupabaseConfigured());
+  const skipPersistRef = useRef(true);
+  const remoteSyncRef = useRef(false);
 
   useEffect(() => {
-    saveSiteState(data);
-  }, [data]);
+    let cancelled = false;
+
+    loadSiteData().then((next) => {
+      if (cancelled) return;
+      skipPersistRef.current = true;
+      setData(next);
+      setStorageMode(isSupabaseConfigured() ? "supabase" : "local");
+      setCloudReady(true);
+      window.requestAnimationFrame(() => {
+        skipPersistRef.current = false;
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!cloudReady || skipPersistRef.current) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      persistSiteData(data).then((result) => {
+        if (result.source === "supabase") {
+          setStorageMode("supabase");
+        }
+      });
+    }, 400);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [data, cloudReady]);
 
   useEffect(() => {
     function onStorage(event) {
-      if (event.key === STORAGE_KEY) {
+      if (event.key === STORAGE_KEY && !remoteSyncRef.current) {
         setData(loadSiteState());
       }
     }
@@ -22,10 +64,41 @@ export function SiteDataProvider({ children }) {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return undefined;
+
+    const unsubscribeRides = subscribeToRides((rides) => {
+      remoteSyncRef.current = true;
+      skipPersistRef.current = true;
+      setData((current) => mergeRemoteRides(current, rides));
+      window.requestAnimationFrame(() => {
+        skipPersistRef.current = false;
+        remoteSyncRef.current = false;
+      });
+    });
+
+    const unsubscribeSettings = subscribeToSiteSettings((payload) => {
+      remoteSyncRef.current = true;
+      skipPersistRef.current = true;
+      setData((current) => mergeRemoteSettings(current, payload));
+      window.requestAnimationFrame(() => {
+        skipPersistRef.current = false;
+        remoteSyncRef.current = false;
+      });
+    });
+
+    return () => {
+      unsubscribeRides();
+      unsubscribeSettings();
+    };
+  }, []);
+
   const api = useMemo(
     () => ({
       data,
       notice,
+      storageMode,
+      cloudReady,
       setNotice,
       updateSite: (patch) => setData((current) => ({ ...current, site: { ...current.site, ...patch } })),
       setFare: (fare) => setData((current) => ({ ...current, fare: { ...current.fare, ...fare } })),
@@ -52,6 +125,7 @@ export function SiteDataProvider({ children }) {
         setData(nextData);
         setNotice("השינויים נשמרו בהצלחה");
         window.setTimeout(() => setNotice(""), 2600);
+        persistSiteData(nextData);
       },
       recordClick: (kind) => {
         setData((current) => ({
@@ -62,9 +136,11 @@ export function SiteDataProvider({ children }) {
           },
         }));
       },
-      reloadFromStorage: () => setData(loadSiteState()),
+      reloadFromStorage: () => {
+        loadSiteData().then((next) => setData(next));
+      },
     }),
-    [data, notice],
+    [data, notice, storageMode, cloudReady],
   );
 
   return <SiteDataContext.Provider value={api}>{children}</SiteDataContext.Provider>;
